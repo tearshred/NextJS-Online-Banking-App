@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 import { Providers } from "./providers";
 import { Provider } from 'react-redux';
-import {store} from '../app/store/store'; 
+import store from '../app/store/store'; 
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
