@@ -1,17 +1,28 @@
 "use client"; // This line ensures this component is a client component. Necessary in order to avoid useSelector (Redux Hook) error when using with NextJS
 
-import React from "react";
+import React, {useEffect} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../app/store/store"; //Getting the initial state for isLoggedIn from the store
 import { loginUser, logoutUser } from "../app/store/authSlice"; //Importing login and logout actions
+import { fetchAccounts } from "@/app/store/accountSlice";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import Dashboard from "./dashboard/Dashboard";
+import { User, Account } from "@/types"; 
 
 const HomePage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const userData = useSelector((state: RootState) => state.auth.userData);
+  const userData = useSelector((state: RootState) => state.auth.userData); // Changed to remove TypeScript error
+  const accounts: Account[] = useSelector((state: RootState) => state.account.accounts);
+  const accountStatus = useSelector((state: RootState) => state.account.status);
+
+  // Fetch accounts when user is logged in
+  useEffect(() => {
+    if (isLoggedIn  && userData?.id) {
+      dispatch(fetchAccounts(userData.id)); // Fetch accounts if logged in
+    }
+  }, [isLoggedIn, userData, dispatch]);
 
   const handleLogin = async (email: string, password: string) => {
     const response = await fetch('/api/auth/login', {
@@ -30,7 +41,11 @@ const HomePage: React.FC = () => {
     // console.log("Attempting to log in with:", email, password); // Log the attempt
   try {
     const result = await dispatch(loginUser({ email, password })).unwrap();
-    // console.log("Login action result:", result); // This should log the fulfilled action
+    console.log("Login action result:", result); // This should log the fulfilled action
+    // After logging in, fetch accounts for the user
+    if (result.userData?.id) {
+      dispatch(fetchAccounts(result.userData?.id));
+    }
   } catch (error) {
     console.error("Login error:", error);
   }
@@ -42,7 +57,7 @@ const HomePage: React.FC = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      console.log('isLoggedIn: ' + isLoggedIn)
+      console.log('User logged in: ' + isLoggedIn)
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -51,7 +66,12 @@ const HomePage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       {isLoggedIn ? (
-        <Dashboard userData={userData} handleLogout={handleLogout} />
+        <Dashboard 
+          userData={userData} 
+          accounts={accounts} 
+          accountStatus={accountStatus} 
+          handleLogout={handleLogout} 
+        />
       ) : (
         <Login handleLogin={handleLogin} />
       )}

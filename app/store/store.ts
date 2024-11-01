@@ -1,10 +1,14 @@
 // store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice'; // Make sure this path is correct
+import accountReducer from './accountSlice';
+import transactionReducer from './transactionSlice'
 
 const store = configureStore({
   reducer: {
-    auth: authReducer, // Add auth reducer here
+    auth: authReducer,
+    account: accountReducer, 
+    transaction: transactionReducer
   },
 });
 

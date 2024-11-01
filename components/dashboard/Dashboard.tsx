@@ -30,11 +30,23 @@ interface UserData {
 interface DashboardProps {
   handleLogout: () => Promise<void>;
   userData: UserData | null;
+  accounts: any[]; // Array of accounts for the user
+  accountStatus: string; // Status of accounts fetch (optional)
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ handleLogout, userData }) => {
+const Dashboard: React.FC<DashboardProps> = ({
+  handleLogout,
+  userData,
+  accounts,
+  accountStatus,
+}) => {
   //Preventing the app from crashing if there is an error
   const [error, setError] = useState<string | null>(null);
+
+  // Log accounts data on each update
+  useEffect(() => {
+    console.log("Accounts data:", accounts); // Check if accounts data is being loaded
+  }, [accounts]);
 
   if (error) return <div>Error: {error}</div>;
   if (!userData) return <div>Loading...</div>;
@@ -85,10 +97,17 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout, userData }) => {
               isPressable
               onPress={() => console.log("checking account")}
             >
-              Checking: $11,123.92
+              {/* {accounts.type}: ${accounts.balance} */}
+              <ul>
+                {accounts.map((account) => (
+                  <li key={account.id}>
+                    {account.accountType}: ${account.balance}
+                  </li>
+                ))}
+              </ul>
             </Card>
             {/* <Divider /> */}
-            <Card
+            {/* <Card
               shadow="none"
               radius="none"
               isPressable
@@ -102,8 +121,8 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout, userData }) => {
               isPressable
               onPress={() => console.log("brokerage account")}
             >
-              Brokerage: $271,425.31
-            </Card>
+              Brokerage: $275,000.00
+            </Card> */}
           </CardBody>
           <CardFooter className="text-small justify-between">
             <b>Draft 1</b>

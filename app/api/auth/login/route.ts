@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db'; // Adjust the import based on your Prisma setup
 import { z } from 'zod';
+import bcrypt from 'bcryptjs';
 
 // Define the schema for input validation using Zod
 const loginSchema = z.object({
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
     });
 
     // Check if user exists and if the password matches (simple comparison)
-    if (user && password === user.password) { // Replace with your logic
+    if (user && await bcrypt.compare(password, user.password)) { // Replace with your logic
       return NextResponse.json({ message: 'Login successful', user }, { status: 200 });
       
     } else {
