@@ -24,13 +24,13 @@ const HomePage: React.FC = () => {
     }
   }, [isLoggedIn, userData, dispatch]);
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (username: string, password: string) => {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }), // Adjust based on your API structure
+      body: JSON.stringify({ username, password }), // Adjust based on your API structure
     });
 
     if (!response.ok) {
@@ -38,9 +38,9 @@ const HomePage: React.FC = () => {
       throw new Error(errorData.message || 'Login failed'); // Throw an error if login fails
     }
 
-    // console.log("Attempting to log in with:", email, password); // Log the attempt
+    // console.log("Attempting to log in with:", username, password); // Log the attempt
   try {
-    const result = await dispatch(loginUser({ email, password })).unwrap();
+    const result = await dispatch(loginUser({ username, password })).unwrap();
     console.log("Login action result:", result); // This should log the fulfilled action
     // After logging in, fetch accounts for the user
     if (result.userData?.id) {
@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
   }
 
     const data = await response.json();
-    dispatch(loginUser({ email, password })); // Handle successful login (e.g., redirect or update state)
+    dispatch(loginUser({ username, password })); // Handle successful login (e.g., redirect or update state)
   };
 
   const handleLogout = async () => {
@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="min-h-screen">
       {isLoggedIn ? (
         <Dashboard 
           userData={userData} 

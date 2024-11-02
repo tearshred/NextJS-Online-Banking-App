@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 
 // Define the schema for input validation using Zod
 const loginSchema = z.object({
-  email: z.string().email(),
+  username: z.string(),
   password: z.string(),
 });
 
@@ -16,12 +16,12 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("Received body:", body); // Log the received body for debugging
 
-    const { email, password } = loginSchema.parse(body); // Validate input
-    console.log("Parsed email and password:", email, password); // Log parsed values
+    const { username, password } = loginSchema.parse(body); // Validate input
+    console.log("Parsed username and password:", username, password); // Log parsed values
 
     // Check for the user in the database
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { username },
     });
 
     // Check if user exists and if the password matches (simple comparison)

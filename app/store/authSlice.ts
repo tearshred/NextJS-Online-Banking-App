@@ -23,14 +23,14 @@ const initialState: AuthState = {
 // Async thunk for logging in
 export const loginUser = createAsyncThunk<
   { isLoggedIn: boolean; userData: User }, // Return type on success
-  { email: string; password: string } // Argument type for the thunk
->("auth/loginUser", async ({ email, password }) => {
+  { username: string; password: string } // Argument type for the thunk
+>("auth/loginUser", async ({ username, password }) => {
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ username, password }),
   });
 
   if (!response.ok) {
