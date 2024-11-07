@@ -64,12 +64,9 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen md:p-2" style={{backgroundColor: "transparent"}}>
       {isLoggedIn ? (
         <Dashboard 
-          userData={userData} 
-          accounts={accounts} 
-          accountStatus={accountStatus} 
           handleLogout={handleLogout} 
         />
       ) : (

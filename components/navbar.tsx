@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -26,6 +28,9 @@ import {
   Logo,
 } from "@/components/icons";
 
+import UserAvatar from "./avatar/UserAvatar";
+import { User } from "@nextui-org/react";
+
 export const Navbar = () => {
   const searchInput = (
     <Input
@@ -49,7 +54,7 @@ export const Navbar = () => {
   );
 
   return (
-    <NextUINavbar className="drop-shadow-md" maxWidth="xl" position="sticky" >
+    <NextUINavbar className="drop-shadow-md" maxWidth="full" position="sticky" shouldHideOnScroll>
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -86,10 +91,11 @@ export const Navbar = () => {
           {/* <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
             <DiscordIcon className="text-default-500" />
           </Link> */}
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
+          {/* <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
-          </Link>
+          </Link> */}
           {/* <ThemeSwitch /> */}
+          <UserAvatar />
         </NavbarItem>
         {/* <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem> */}
         {/* <NavbarItem className="hidden md:flex">
@@ -107,10 +113,10 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
+        {/* <Link isExternal aria-label="Github" href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
         </Link>
-        <ThemeSwitch />
+        <ThemeSwitch /> */}
         <NavbarMenuToggle />
       </NavbarContent>
 

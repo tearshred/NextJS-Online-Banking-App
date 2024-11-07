@@ -10,6 +10,7 @@ import store from '../app/store/store';
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
+import { GeistSans } from "geist/font/sans";
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: light)", color: "#F5F7F8" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 };
@@ -40,13 +41,13 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
+          GeistSans.className,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark"  }}>
-          <div className="">
+          <div className="" >
             <Navbar />
-            <main className="container mx-auto h-full max-w-7xl pt-6 flex-grow">
+            <main className="container mx-auto max-w-full h-full pt-6 p-1.5 flex-grow min-h-screen"  style={{backgroundColor: "#F5F7F8"}}>
               {children}
             </main>
             <footer className="w-full flex items-center justify-center py-3">

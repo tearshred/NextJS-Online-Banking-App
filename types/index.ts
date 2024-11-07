@@ -2,6 +2,7 @@ import { SVGProps } from "react";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
+  color?: string;
 };
 
 // Reusable types
@@ -19,7 +20,8 @@ export type Account = {
   id: string;          
   userId: string;      // References User id
   balance: number;     
-  user?: User;         // Optional relationship to User
+  user?: User;         //Optional relationship to User
+  accountType: string;      
 };
 
 export type Transaction = {
