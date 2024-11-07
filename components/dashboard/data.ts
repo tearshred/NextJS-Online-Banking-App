@@ -144,7 +144,7 @@ export const users = [
     date: "09-26-2024",
     desc: "PURCHASE XXXX2020-09-26-2024 LLC",
     type: "Withdrawal",
-    amount: "$650.00",
+    amount: "$670.00",
 },
 {
     key: "17",
