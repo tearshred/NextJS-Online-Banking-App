@@ -44,7 +44,7 @@ export default function RootLayout({
           GeistSans.className,
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark"  }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light"  }}>
           <div className="" >
             <Navbar />
             <main className="container mx-auto max-w-full h-full pt-6 p-1.5 flex-grow min-h-screen"  style={{backgroundColor: "#F5F7F8"}}>
