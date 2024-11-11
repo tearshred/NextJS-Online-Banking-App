@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/app/store/store";
+import { AppDispatch, RootState } from "@/app/store/store";
 import {
   Input,
   Image,
@@ -17,6 +17,9 @@ import { BalanceIcon } from "../icons";
 
 import AccountInfo from "./AccountInfo";
 import IEChart from "./IEChart";
+import ForgotPassword from "../auth/ForgotPassword";
+import PasswordResetForm from "../auth/PasswordResetForm";
+import { fetchUserProfile } from "@/app/store/authSlice";
 
 interface DashboardProps {
   handleLogout: () => Promise<void>;
@@ -25,13 +28,22 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
   //Preventing the app from crashing if there is an error
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const userData = useSelector((state: RootState) => state.auth.userData);
+  const userProfile = useSelector((state: RootState) => state.auth.userProfile);
   const accounts = useSelector((state: RootState) => state.account.accounts);
   const accountStatus = useSelector((state: RootState) => state.account.status);
 
+  useEffect(() => {
+    if (userData?.userId && !userProfile) {
+      dispatch(fetchUserProfile(userData.userId));
+    }
+  }, [userData, userProfile, dispatch]);
+
   if (error) return <div>Error: {error}</div>;
-  if (!userData) return <div>Loading...</div>;
+  if (!userData || !userProfile) return <div>Loading...</div>;
+
+  console.log(userProfile?.firstName);
 
   return (
     <div>
@@ -39,8 +51,8 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
         {/* Header */}
         <div className="mb-3">
           <div className="flex justify-between items-center ">
-            <h1 className="text-2xl ">Welcome, {userData.firstName}</h1>
-            <Button color="primary" variant="bordered" onClick={handleLogout}>
+            <h1 className="text-2xl ">Welcome, {userProfile.firstName}</h1>
+            <Button onClick={handleLogout} color="primary" variant="bordered">
               Log out
             </Button>
           </div>
@@ -49,6 +61,7 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
         <div className="my-2 grid-cols-3">
           <h1 className="text-2xl"><b>$88,491.37</b></h1>
           <p className="text-tiny">Total Balance</p>
+          
         </div>
         {/* Account Info */}
         <div className="grid sm:grid-cols-1 md:grid-cols-3 md:mt-4 auto-rows-fr gap-3">

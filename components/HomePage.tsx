@@ -1,74 +1,99 @@
-"use client"; // This line ensures this component is a client component. Necessary in order to avoid useSelector (Redux Hook) error when using with NextJS
+"use client";
 
-import React, {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../app/store/store"; //Getting the initial state for isLoggedIn from the store
-import { loginUser, logoutUser } from "../app/store/authSlice"; //Importing login and logout actions
+import { RootState, AppDispatch } from "../app/store/store";
+import { loginUser, logoutUser } from "../app/store/authSlice";
 import { fetchAccounts } from "@/app/store/accountSlice";
+import { loginAction } from "@/app/actions/auth/login";
+import { validateToken } from "@/app/actions/auth/validateToken";
 import Login from "../components/auth/Login";
-import Register from "../components/auth/Register";
 import Dashboard from "./dashboard/Dashboard";
-import { User, Account } from "@/types"; 
+import { CircularProgress } from "@nextui-org/react";
 
 const HomePage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const userData = useSelector((state: RootState) => state.auth.userData); // Changed to remove TypeScript error
-  const accounts: Account[] = useSelector((state: RootState) => state.account.accounts);
-  const accountStatus = useSelector((state: RootState) => state.account.status);
+  const userData = useSelector((state: RootState) => state.auth.userData);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch accounts when user is logged in
   useEffect(() => {
-    if (isLoggedIn  && userData?.id) {
-      dispatch(fetchAccounts(userData.id)); // Fetch accounts if logged in
-    }
-  }, [isLoggedIn, userData, dispatch]);
+    const initializeAuth = async () => {
+      try {
+        // Get token from localStorage or cookies
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          const { isValid, userData } = await validateToken(token);
+
+          if (isValid && userData) {
+            // If token is valid, set the auth state
+            await dispatch(
+              loginUser({ userData: { id: userData.userId }, token })
+            ).unwrap();
+            if (userData.userId) {
+              dispatch(fetchAccounts(userData.userId));
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Auth initialization failed:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, [dispatch]);
 
   const handleLogin = async (username: string, password: string) => {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }), // Adjust based on your API structure
-    });
+    try {
+      const response = await loginAction(username, password);
+      
+      if (response.success && response.data) {
+        localStorage.setItem("token", response.data.token);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed'); // Throw an error if login fails
+        await dispatch(
+          loginUser({
+            userData: { id: response.data.userData.id },
+            token: response.data.token,
+          })
+        ).unwrap();
+
+        if (response.data.userData.id) {
+          dispatch(fetchAccounts(response.data.userData.id));
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
     }
-
-    // console.log("Attempting to log in with:", username, password); // Log the attempt
-  try {
-    const result = await dispatch(loginUser({ username, password })).unwrap();
-    console.log("Login action result:", result); // This should log the fulfilled action
-    // After logging in, fetch accounts for the user
-    if (result.userData?.id) {
-      dispatch(fetchAccounts(result.userData?.id));
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-  }
-
-    const data = await response.json();
-    dispatch(loginUser({ username, password })); // Handle successful login (e.g., redirect or update state)
   };
 
   const handleLogout = async () => {
     try {
+      localStorage.removeItem("token");
       await dispatch(logoutUser()).unwrap();
-      console.log('User logged in: ' + isLoggedIn)
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <CircularProgress label="Loading..." />
+      </div>
+    ); // Or your loading component
+  }
+
   return (
-    <div className="min-h-screen md:p-2" style={{backgroundColor: "transparent"}}>
+    <div
+      className="min-h-screen md:p-2"
+      style={{ backgroundColor: "transparent" }}
+    >
       {isLoggedIn ? (
-        <Dashboard 
-          handleLogout={handleLogout} 
-        />
+        <Dashboard handleLogout={handleLogout} />
       ) : (
         <Login handleLogin={handleLogin} />
       )}

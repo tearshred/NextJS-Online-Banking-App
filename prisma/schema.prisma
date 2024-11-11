@@ -23,6 +23,8 @@ model User {
   password  String
   accounts  Account[]
   createdAt DateTime @default(now()) // Relation field linking to multiple accounts
+  resetPasswordToken String? @unique
+  resetPasswordTokenExpiry DateTime?
 }
 
 model Account {
