@@ -6,7 +6,11 @@
 		"dev": "next dev --turbo",
 		"build": "prisma generate && next build",
 		"start": "next start",
-		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix"
+		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate deploy",
+		"db:seed": "ts-node prisma/seed.ts",
+		"vercel-build": "prisma generate && prisma migrate deploy && ts-node prisma/seed.ts"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -28,6 +32,8 @@
 		"@react-aria/ssr": "3.9.4",
 		"@react-aria/visually-hidden": "3.8.12",
 		"@reduxjs/toolkit": "^2.3.0",
+		"@types/bcrypt": "^5.0.2",
+		"bcrypt": "^5.1.1",
 		"bcryptjs": "^2.4.3",
 		"clsx": "2.1.1",
 		"framer-motion": "~11.1.1",
