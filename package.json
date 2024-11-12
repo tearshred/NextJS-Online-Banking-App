@@ -3,14 +3,14 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbo",
-		"build": "prisma generate && next build",
+		"dev": "next dev",
+		"build": "next build",
 		"start": "next start",
-		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix",
+		"lint": "next lint",
 		"prisma:generate": "prisma generate",
 		"prisma:migrate": "prisma migrate deploy",
 		"db:seed": "ts-node prisma/seed.ts",
-		"vercel-build": "prisma generate && prisma migrate deploy && ts-node prisma/seed.ts"
+		"vercel-build": "prisma generate && prisma migrate reset --force --skip-seed && next build"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
