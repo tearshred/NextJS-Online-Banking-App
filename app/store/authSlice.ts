@@ -83,7 +83,7 @@ export const fetchUserData = createAsyncThunk(
   'auth/fetchUserData',
   async (userId: string) => {
     const userData = await getUserData(userId);
-    // Remove createdAt from both user and accounts
+    // Remove createdAt from both user and accounts. We don't need it on the client side.
     const { createdAt, ...userDataWithoutDate } = userData;
     const accounts = userData.accounts.map(({ createdAt, ...account }) => account);
     
