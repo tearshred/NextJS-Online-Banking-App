@@ -4,19 +4,15 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { User } from "@/types"; // Ensure you have a User type defined in types/index.ts
 import prisma from "../../lib/db"; // Ensure this path is correct
 import { validateToken } from '@/app/actions/auth/validateToken'; // Import the server action
+import { getUserData } from '@/app/actions/users/userData'; // Import the server action
 
 // Define an interface for the initial state
 interface AuthState {
   isLoggedIn: boolean;
   loading: boolean;
   error: string | null;
-  userData: {
-    userId: string;
-    username: string;
-    iat: number;
-    exp: number;
-  } | null; // This is what we get from the token
-  userProfile: User | null; // This will store the full user data
+  tokenData: string | null; // Token-related data
+  userData: User | null; // Full user profile data
 }
 
 // Initial state
@@ -24,23 +20,17 @@ const initialState: AuthState = {
   isLoggedIn: false,
   loading: false,
   error: null,
+  tokenData: null,
   userData: null,
-  userProfile: null,
 };
 
 // Async thunk for logging in
 export const loginUser = createAsyncThunk(
   'auth/login',
   async ({ userData, token }: { 
-    userData: Partial<User>;  // Make User partial since we might only have id
+    userData: User;  // Change from Partial<User> to User
     token: string;
   }) => {
-    console.log('Token structure:', {
-      token,
-      tokenLength: token?.length,
-      isString: typeof token === 'string'
-    });
-    
     // Save token to localStorage
     localStorage.setItem('token', token);
 
@@ -88,17 +78,16 @@ export const checkAuthStatus = createAsyncThunk(
   }
 );
 
-// Add new thunk to fetch full user profile
-export const fetchUserProfile = createAsyncThunk(
-  'auth/fetchProfile',
+// Rename the thunk
+export const fetchUserData = createAsyncThunk(
+  'auth/fetchUserData',
   async (userId: string) => {
-    const response = await fetch(`/api/users/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    if (!response.ok) throw new Error('Failed to fetch profile');
-    return await response.json() as User;
+    const userData = await getUserData(userId);
+    // Remove createdAt from both user and accounts
+    const { createdAt, ...userDataWithoutDate } = userData;
+    const accounts = userData.accounts.map(({ createdAt, ...account }) => account);
+    
+    return { ...userDataWithoutDate, accounts } as User;
   }
 );
 
@@ -109,6 +98,7 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       state.isLoggedIn = false;
+      state.tokenData = null; // Clear token-related data on logout
       state.userData = null; // Clear user data on logout
     },
   },
@@ -119,11 +109,11 @@ const authSlice = createSlice({
         state.loading = true; // Set loading to true while the login request is in progress
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false; // Set loading to false when login is successful
-        state.isLoggedIn = true; // Update isLoggedIn based on the response
-        state.userData = action.payload.userData as unknown as User; // Store the user data
-        state.error = null; // Clear any previous errors
-        // Don't try to access token since it's not returned from the thunk
+        state.loading = false;
+        state.isLoggedIn = true;
+        state.userData = action.payload.userData;
+        state.tokenData = action.payload.token;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false; // Set loading to false when login fails
@@ -131,6 +121,7 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.isLoggedIn = false; // Set isLoggedIn to false on logout
+        state.tokenData = null; // Clear token-related data on logout
         state.userData = null; // Clear user data on logout
         state.error = null; // Clear any previous errors if needed
         localStorage.removeItem('token'); // Remove token
@@ -143,11 +134,11 @@ const authSlice = createSlice({
         state.isLoggedIn = false;
         state.userData = null;
       })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.userProfile = action.payload;
+      .addCase(fetchUserData.fulfilled, (state, action) => {
+        state.userData = action.payload;
       })
-      .addCase(fetchUserProfile.rejected, (state) => {
-        state.userProfile = null;
+      .addCase(fetchUserData.rejected, (state) => {
+        state.userData = null;
       });
   },
 });

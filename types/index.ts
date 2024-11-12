@@ -12,7 +12,7 @@ export type User = {
   username: string;    
   firstName: string;   
   lastName: string;   
-  address: string; 
+  address: string | null; 
   accounts: Account[]; // Relationship to Account
 };
 

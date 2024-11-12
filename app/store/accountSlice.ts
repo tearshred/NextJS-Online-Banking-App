@@ -1,28 +1,28 @@
 // accountSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Account } from '@/types';
-import prisma from '@/lib/db';
+import { getAccounts } from '@/app/actions/accounts/getAccounts';
+
+const serializeAccount = (account: any) => ({
+  ...account,
+  createdAt: account.createdAt?.toISOString(),
+  updatedAt: account.updatedAt?.toISOString(),
+});
 
 export const fetchAccounts = createAsyncThunk(
   'account/fetchAccounts',
-  async (userId: string, thunkAPI) => {
+  async (userId: string) => {
     try {
-      console.log("Fetching accounts for user ID:", userId); // Log user ID
-      const response = await fetch(`/api/account/${userId}`, {
-        method: 'GET',
-      });
-
-      // Check if the response is okay (status in the range 200-299)
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      const response = await getAccounts(userId);
+      
+      if (!response.success) {
+        throw new Error(response.error);
       }
 
-      const accounts = await response.json();
-      console.log("Accounts fetched:", accounts); // Log fetched accounts
-      return accounts;
+      return response.data?.map(serializeAccount) ?? [];
     } catch (error) {
-      console.error("Error fetching accounts:", error); // Log any error
-      return thunkAPI.rejectWithValue("Failed to fetch accounts");
+      console.error("Error fetching accounts:", error);
+      throw new Error("Failed to fetch accounts");
     }
   }
 );
@@ -40,7 +40,7 @@ const accountSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchAccounts.fulfilled, (state, action) => {
-        state.accounts = action.payload;
+        state.accounts = action.payload ?? [];
         state.status = 'succeeded';
       })
       .addCase(fetchAccounts.rejected, (state, action) => {

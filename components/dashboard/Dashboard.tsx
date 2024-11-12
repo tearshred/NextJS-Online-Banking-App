@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,31 +21,41 @@ import AccountInfo from "./AccountInfo";
 import IEChart from "./IEChart";
 import ForgotPassword from "../auth/ForgotPassword";
 import PasswordResetForm from "../auth/PasswordResetForm";
-import { fetchUserProfile } from "@/app/store/authSlice";
+import { fetchUserData } from "@/app/store/authSlice";
+import { User } from "@/types";
+import { getUserData } from '@/app/actions/users/userData'
 
 interface DashboardProps {
+  userId: string;
   handleLogout: () => Promise<void>;
+  accounts: any[];
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
-  //Preventing the app from crashing if there is an error
-  const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
+const Dashboard = ({ userId, handleLogout, accounts }: DashboardProps) => {
   const userData = useSelector((state: RootState) => state.auth.userData);
-  const userProfile = useSelector((state: RootState) => state.auth.userProfile);
-  const accounts = useSelector((state: RootState) => state.account.accounts);
-  const accountStatus = useSelector((state: RootState) => state.account.status);
+  const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (userData?.userId && !userProfile) {
-      dispatch(fetchUserProfile(userData.userId));
-    }
-  }, [userData, userProfile, dispatch]);
+    const fetchData = async () => {
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
 
-  if (error) return <div>Error: {error}</div>;
-  if (!userData || !userProfile) return <div>Loading...</div>;
+      try {
+        await dispatch(fetchUserData(userId));
+      } catch (error) {
+        // console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  console.log(userProfile?.firstName);
+    fetchData();
+  }, [userId, dispatch]);
+
+  if (!userData) return <div>Loading...</div>;
 
   return (
     <div>
@@ -51,7 +63,7 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
         {/* Header */}
         <div className="mb-3">
           <div className="flex justify-between items-center ">
-            <h1 className="text-2xl ">Welcome, {userProfile.firstName}</h1>
+            <h1 className="text-2xl ">Welcome, {userData.firstName}</h1>
             <Button onClick={handleLogout} color="primary" variant="bordered">
               Log out
             </Button>
@@ -113,21 +125,24 @@ const Dashboard: React.FC<DashboardProps> = ({ handleLogout }) => {
                 <p className="text-tiny uppercase font-bold">Balances</p>
               </CardHeader>
               <CardBody className="overflow-visible p-3">
-                {/* {accounts.type}: ${accounts.balance} */}
                 <ul>
-                  {accounts.map((account) => (
-                    <li key={account.id}>
-                      <div>
-                        <Card
-                          className="flex-row"
-                          shadow="none"
-                          radius="none"
-                        >
-                          <span className="uppercase">{account.accountType}</span>: ${account.balance}.00
-                        </Card>
-                      </div>
-                    </li>
-                  ))}
+                  {accounts && accounts.length > 0 ? (
+                    accounts.map((account) => (
+                      <li key={account.id}>
+                        <div>
+                          <Card
+                            className="flex-row"
+                            shadow="none"
+                            radius="none"
+                          >
+                            <span className="uppercase">{account.accountType}</span>: ${account.balance}.00
+                          </Card>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>No accounts found</li>
+                  )}
                 </ul>
               </CardBody>
               <CardFooter className="text-small justify-between"></CardFooter>
