@@ -12,12 +12,13 @@ import {
 } from "@nextui-org/react";
 
 interface LoginProps {
-  handleLogin: (username: string, password: string) => Promise<void>;
-}
-
-interface LoginError {
-  type: 'username_not_found' | 'invalid_password' | 'other';
-  message: string;
+  handleLogin: (username: string, password: string) => Promise<{
+    success: boolean;
+    error?: {
+      code: string;
+      message: string;
+    };
+  }>;
 }
 
 const Login: React.FC<LoginProps> = ({ handleLogin }) => {
@@ -32,6 +33,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Login attempt started with:', { username, password }); // Debug log
     
     // Reset errors
     setErrors({
@@ -42,6 +44,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
 
     // Validate empty fields
     if (!username.trim() || !password.trim()) {
+      console.log('Empty field validation triggered'); // Debug log
       setErrors({
         username: !username.trim() ? "Username is required" : "",
         password: !password.trim() ? "Password is required" : "",
@@ -53,32 +56,29 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
     setIsLoading(true);
     
     try {
-      await handleLogin(username, password);
-    } catch (error: any) {
-      console.log('Login component error:', error);
+      const response = await handleLogin(username, password);
+      console.log('Login response:', response); // Debug log
       
-      // Handle different error cases
-      const errorMessage = error?.message || "An unexpected error occurred";
-      
-      if (errorMessage === "Invalid credentials") {
-        setErrors({
-          username: "",
-          password: "Invalid username or password",
-          general: ""
-        });
-      } else if (errorMessage.includes("Database error")) {
+      if (!response.success) {
+        console.log('Login failed:', response.error); // Debug log
         setErrors({
           username: "",
           password: "",
-          general: "A system error occurred. Please try again later."
+          general: response.error?.message || "Login failed"
         });
-      } else {
-        setErrors({
-          username: "",
-          password: "",
-          general: "An unexpected error occurred"
-        });
+        return;
       }
+
+      // Handle successful login here (redirect, etc.)
+      console.log('Login successful!');
+      
+    } catch (error: any) {
+      console.error('Login error:', error); // Debug log
+      setErrors({
+        username: "",
+        password: "",
+        general: error.message || "An unexpected error occurred"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -130,6 +130,11 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
               isInvalid={!!errors.password}
               errorMessage={errors.password}
             />
+            {errors.general && (
+              <div className="text-danger text-sm mb-2 text-center">
+                {errors.general}
+              </div>
+            )}
             <Spacer y={1} />
             <div className="flex justify-center">
               <Button
@@ -148,6 +153,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
             <div>
               <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
             </div>
+            
           </form>
         </CardBody>
       </Card>

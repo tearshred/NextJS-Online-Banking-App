@@ -41,9 +41,27 @@ export const authService = {
   },
 
   login: async (dispatch: AppDispatch, username: string, password: string) => {
-    const response = await loginAction(username, password);
-    
-    if (response.success && response.data) {
+    try {
+      console.log('Starting login process...');
+      const response = await loginAction(username, password);
+      console.log('Login response:', response);
+      
+      if (!response.success) {
+        console.log('Login failed:', response.error);
+        return {
+          success: false,
+          error: {
+            code: 'INVALID_CREDENTIALS',
+            message: response.error?.message || 'Username not found'
+          }
+        };
+      }
+      
+      if (!response.data) {
+        throw new Error('Login response data is missing');
+      }
+      
+      console.log('Login successful, setting up user...');
       localStorage.setItem("token", response.data.token);
       
       const userData: User = {
@@ -62,9 +80,18 @@ export const authService = {
       })).unwrap();
 
       dispatch(fetchAccounts(response.data.userData.id));
-      return true;
+      return { success: true };
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      return {
+        success: false,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'An unexpected error occurred'
+        }
+      };
     }
-    return false;
   },
 
   logout: async (dispatch: AppDispatch) => {

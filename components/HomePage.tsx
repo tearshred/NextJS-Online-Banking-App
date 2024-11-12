@@ -33,12 +33,29 @@ const HomePage: React.FC = () => {
     fetchAccounts();
   }, [userData?.id]);
 
-  const handleLogin = async (username: string, password: string): Promise<void> => {
+  const handleLogin = async (username: string, password: string) => {
     try {
-      await authService.login(dispatch, username, password);
+      const loginSuccessful = await authService.login(dispatch, username, password);
+      if (!loginSuccessful) {
+        console.error("Login error:", loginSuccessful);
+        return { 
+          success: false, 
+          error: { 
+            code: 'LOGIN_ERROR', 
+            message: 'Login failed' 
+          }
+        };
+      }
+      return loginSuccessful;
     } catch (error) {
       console.error("Login error:", error);
-      throw error;
+      return { 
+        success: false, 
+        error: { 
+          code: 'LOGIN_ERROR', 
+          message: error instanceof Error ? error.message : 'Login failed' 
+        }
+      };
     }
   };
 
