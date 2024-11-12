@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import * as bcrypt from 'bcrypt'
 
+// Only run seeding in development, skip in production
+if (process.env.NODE_ENV === 'production') {
+  console.log('Skipping seed in production')
+  process.exit(0)
+}
+
 const prisma = new PrismaClient()
 
 async function main() {
