@@ -27,11 +27,10 @@ import { getUserData } from '@/app/actions/users/userData'
 
 interface DashboardProps {
   userId: string;
-  handleLogout: () => Promise<void>;
   accounts: any[];
 }
 
-const Dashboard = ({ userId, handleLogout, accounts }: DashboardProps) => {
+const Dashboard = ({ userId, accounts }: DashboardProps) => {
   const userData = useSelector((state: RootState) => state.auth.userData);
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
@@ -57,26 +56,22 @@ const Dashboard = ({ userId, handleLogout, accounts }: DashboardProps) => {
 
   if (!userData) return <div>Loading...</div>;
 
+  // Calculate total balance from all accounts and format correctly
+  // toLocaleString is used to format the number with commas and two decimal places
+  // For example, 88491.37 will be formatted as 88,491.37
+  const totalBalance = accounts
+    .reduce((sum, account) => sum + account.balance, 0)
+    .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
     <div>
-      <div className="min-w-full py-3 px-0.5" id="card">
-        {/* Header */}
-        <div className="mb-3">
-          <div className="flex justify-between items-center ">
-            <h1 className="text-2xl ">Welcome, {userData.firstName}</h1>
-            <Button onClick={handleLogout} color="primary" variant="bordered">
-              Log out
-            </Button>
-          </div>
-          <Divider className="my-4" />
-        </div>
-        <div className="my-2 grid-cols-3">
-          <h1 className="text-2xl"><b>$88,491.37</b></h1>
-          <p className="text-tiny">Total Balance</p>
-          
+      <div className="min-w-full py-3 px-0.5">
+        <div className="my-2 grid-cols-3 p-3">
+          <h1 className="text-2xl"><b>${totalBalance}</b></h1>
+          <p className="text-tiny">Total Balance</p>    
         </div>
         {/* Account Info */}
-        <div className="grid sm:grid-cols-1 md:grid-cols-3 md:mt-4 auto-rows-fr gap-3">
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 md:mt-5 auto-rows-fr gap-3">
           <div className="h-full">
             <Card
               shadow="sm"
@@ -89,6 +84,7 @@ const Dashboard = ({ userId, handleLogout, accounts }: DashboardProps) => {
               <CardBody className="overflow-visible p-4 grid grid-cols-3">
                 <div className="col-span-2">
                   <h1>$ 88,198.77</h1> <BalanceIcon fill="red"/>
+                  <p>{userData.firstName} {userData.lastName}</p>
                 </div>
                 <div>
                   <h1>Test</h1>

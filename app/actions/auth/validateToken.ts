@@ -1,21 +1,27 @@
 "use server";
-import jwt from 'jsonwebtoken';
-import { ensureJWTSecret } from '@/lib/generateSecret';
-
-const JWT_SECRET = ensureJWTSecret();
+import { verify } from 'jsonwebtoken';
+import prisma from '@/lib/db';
 
 export async function validateToken(token: string) {
-    try {
-        console.log('Received token:', token.slice(0, 10) + '...');
-        console.log('Token length:', token.length);
-        console.log('Secret first chars:', JWT_SECRET.slice(0, 3) + '...');
+  try {
+    const decoded = verify(token, process.env.JWT_SECRET || 'default-secret-key') as { userId: string };
+    
+    // Just get the ID from validation, full data will be fetched separately
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: { id: true }
+    });
 
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-        console.log('Token decoded successfully:', decoded);
-        return { isValid: true, userData: decoded };
-    } catch (error: any) {
-        console.error('Token validation failed. Error type:', error.name);
-        console.error('Error message:', error.message);
-        return { isValid: false, userData: null };
+    if (!user) {
+      return { isValid: false, userData: null };
     }
+
+    return {
+      isValid: true,
+      userData: { userId: user.id }
+    };
+  } catch (error) {
+    console.error('Token validation error:', error);
+    return { isValid: false, userData: null };
+  }
 } 

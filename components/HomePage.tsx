@@ -78,8 +78,7 @@ const HomePage: React.FC = () => {
     >
       {isLoggedIn ? (
         <Dashboard 
-          userId={userData?.id || ''} 
-          handleLogout={handleLogout}
+          userId={userData?.id || ''}
           accounts={accounts}
         />
       ) : (

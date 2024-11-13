@@ -1,27 +1,37 @@
 'use server'
 
-import prisma from '@/lib/db'
+import prisma from "@/lib/db";
 
 export async function getUserData(userId: string) {
-  if (!userId) {
-    throw new Error("User ID is required")
-  }
-
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        accounts: true,
+    const userData = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        address: true,
+        accounts: {
+          select: {
+            id: true,
+            balance: true,
+            accountType: true,
+          }
+        }
       }
-    })
+    });
 
-    if (!user) {
-      throw new Error("User not found")
+    if (!userData) {
+      throw new Error('User not found');
     }
 
-    return user
+    return userData;
   } catch (error) {
-    console.error("Error fetching user data:", error)
-    throw new Error("Failed to fetch user data")
+    console.error('Error fetching user data:', error);
+    throw error;
   }
 }
