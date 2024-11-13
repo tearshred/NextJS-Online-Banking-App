@@ -82,11 +82,18 @@ export const checkAuthStatus = createAsyncThunk(
 export const fetchUserData = createAsyncThunk(
   'auth/fetchUserData',
   async (userId: string) => {
+    // Fetch the user data from the server using the getUserData action
     const userData = await getUserData(userId);
-    // Remove createdAt from both user and accounts. We don't need it on the client side.
-    const { createdAt, ...userDataWithoutDate } = userData;
-    const accounts = userData.accounts.map(({ createdAt, ...account }) => account);
+
+    // Remove the createdAt field from userData and keep all other properties
+    // The underscore (_) is used as a throwaway variable for the unwanted createdAt
+    const { createdAt: _, ...userDataWithoutDate } = userData as { createdAt?: Date } & User;
+
+    // Create a clean copy of each account object in the accounts array
+    // This ensures we're working with fresh objects without any reference to the original
+    const accounts = userData.accounts.map(account => ({ ...account }));
     
+    // Return a new object combining the user data (minus createdAt) with the accounts array
     return { ...userDataWithoutDate, accounts } as User;
   }
 );

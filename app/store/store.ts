@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './authSlice'; // Make sure this path is correct
 import accountReducer from './accountSlice';
 import transactionReducer from './transactionSlice'
+import signUpReducer from './signUpSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     account: accountReducer, 
-    transaction: transactionReducer
+    transaction: transactionReducer,
+    signup: signUpReducer
   },
 });
 

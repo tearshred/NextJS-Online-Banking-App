@@ -131,7 +131,7 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
                             shadow="none"
                             radius="none"
                           >
-                            <span className="uppercase">{account.accountType}</span>: ${account.balance}.00
+                            <span className="capitalize">{account.accountType}: ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(account.balance)}</span>
                           </Card>
                         </div>
                       </li>

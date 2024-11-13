@@ -8,6 +8,7 @@ import Login from "../components/auth/Login";
 import Dashboard from "./dashboard/Dashboard";
 import { CircularProgress } from "@nextui-org/react";
 import { getAccounts } from "@/app/actions/accounts/getAccounts";
+import Register from "../components/auth/Register";
 
 const HomePage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -76,6 +77,7 @@ const HomePage: React.FC = () => {
       className="min-h-screen md:p-2"
       style={{ backgroundColor: "transparent" }}
     >
+      <Register />
       {isLoggedIn ? (
         <Dashboard 
           userId={userData?.id || ''}

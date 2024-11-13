@@ -21,7 +21,8 @@ export type Account = {
   userId: string;      // References User id
   balance: number;     
   user?: User;         //Optional relationship to User
-  accountType: string;      
+  accountType: string;  
+  accountNumber: string;
 };
 
 export type Transaction = {

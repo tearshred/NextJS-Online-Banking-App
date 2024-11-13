@@ -9,8 +9,8 @@ export default function UserProfile() {
   if (!userData) return null;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-background p-4">
-      <Card className="max-w-2xl w-full shadow-lg">
+    <div className="flex justify-center items-center min-h-screen p-4">
+      <Card className="min-h-screen w-full shadow-lg">
         <CardHeader className="flex gap-5 p-6">
           <Avatar
             isBordered

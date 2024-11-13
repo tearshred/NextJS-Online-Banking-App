@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING") // Vercel's shadow database URL
+  url = env("POSTGRES_PRISMA_URL")
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // Vercel's shadow database URL
 }
 
 model User {
@@ -32,6 +32,7 @@ model Account {
   id          String     @id @default(uuid()) // UUID as the primary key
   userId      String     // Foreign key referencing User
   accountType String      // e.g., "checking", "savings"
+  accountNumber String    @unique
   balance     Float      @default(0) // Account balance
   createdAt   DateTime   @default(now())
   transactions Transaction[] // One-to-many relation with Transaction
