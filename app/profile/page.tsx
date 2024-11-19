@@ -5,69 +5,64 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Spinner } from "@nextui-org/react";
-import { checkAuthStatus, fetchUserData } from "@/app/store/authSlice";
+import { CircularProgress } from "@nextui-org/react";
+import { authService } from "@/app/services/authService";
 
 export default function ProfilePage() {
-  const { isLoggedIn, loading, userData } = useSelector((state: RootState) => state.auth);
+  // Get auth state from Redux store
+  const { isLoggedIn, userData } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+  
+  // Loading state for initial auth check
+  const [isLoading, setIsLoading] = useState(true);
+  // State to track if auth check has completed
+  const [authChecked, setAuthChecked] = useState(false);
 
+  // First useEffect: Initialize authentication
   useEffect(() => {
-    let mounted = true;
-
-    const initializeData = async () => {
+    const initAuth = async () => {
       try {
-        if (!mounted) return;
-        const token = localStorage.getItem('token');
-        console.log("Token check:", { 
-          hasToken: !!token, 
-          tokenValue: token,
-          isLoggedIn,
-          hasUserData: !!userData 
-        });
-
-        if (!token) {
-          console.log("No token, redirecting");
-          router.replace('/');
-          return;
-        }
-
-        // First get basic auth data
-        const authResult = await dispatch(checkAuthStatus()).unwrap();
-        console.log("Auth check result:", authResult);
-        
-        if (authResult?.id) {
-          // Then fetch full user data
-          const userDataResult = await dispatch(fetchUserData(authResult.id)).unwrap();
-          console.log("User data result:", userDataResult);
-        } else {
-          console.log("Auth check failed - no ID returned");
-          router.replace('/');
-        }
-      } catch (error) {
-        if (!mounted) return;
-        console.error("Profile initialization error:", error);
-        router.replace('/');
+        // Check if user is authenticated (validates token, gets user data)
+        await authService.initializeAuth(dispatch);
+        // Mark auth check as complete
+        setAuthChecked(true);
+      } finally {
+        // Always set loading to false when done, regardless of outcome
+        setIsLoading(false);
       }
     };
 
-    if (!userData?.firstName) {
-      initializeData();
+    initAuth();
+  }, [dispatch]); // Only re-run if dispatch changes
+
+  // Second useEffect: Handle redirects after auth check
+  useEffect(() => {
+    // Only redirect if auth check is complete and user is not logged in
+    if (authChecked && !isLoggedIn) {
+      router.push('/auth/login');
     }
+  }, [authChecked, isLoggedIn, router]); // Run when auth status or check state changes
 
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch, router, userData]);
-
-  if (loading || !userData?.firstName) {
+  // Show loading spinner while checking auth
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Spinner size="lg" />
+        <CircularProgress aria-label="Loading..." />
       </div>
     );
   }
 
+  // Show loading spinner if not logged in or no user data
+  // This prevents flash of unauthorized content
+  if (!isLoggedIn || !userData) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <CircularProgress aria-label="Loading..." />
+      </div>
+    );
+  }
+
+  // If all checks pass, render the profile
   return <UserProfile />;
 } 

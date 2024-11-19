@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../app/store/store";
 import { authService } from "@/app/services/authService";
-import Login from "../components/auth/Login";
 import Dashboard from "./dashboard/Dashboard";
 import { CircularProgress } from "@nextui-org/react";
 import { getAccounts } from "@/app/actions/accounts/getAccounts";
-import Register from "../components/auth/Register";
+import { useRouter } from 'next/navigation';
+import Login from "./auth/Login";
 
 const HomePage: React.FC = () => {
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const userData = useSelector((state: RootState) => state.auth.userData);
@@ -18,8 +19,17 @@ const HomePage: React.FC = () => {
   const [accounts, setAccounts] = useState<any[]>([]);
 
   useEffect(() => {
-    authService.initializeAuth(dispatch).finally(() => setIsLoading(false));
-  }, [dispatch]);
+    const initAuth = async () => {
+      await authService.initializeAuth(dispatch);
+      setIsLoading(false);
+      
+      if (!isLoggedIn) {
+        router.push('/auth/login');
+      }
+    };
+
+    initAuth();
+  }, [dispatch, isLoggedIn, router]);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -31,37 +41,14 @@ const HomePage: React.FC = () => {
       }
     };
 
-    fetchAccounts();
-  }, [userData?.id]);
-
-  const handleLogin = async (username: string, password: string) => {
-    try {
-      const loginSuccessful = await authService.login(dispatch, username, password);
-      if (!loginSuccessful) {
-        console.error("Login error:", loginSuccessful);
-        return { 
-          success: false, 
-          error: { 
-            code: 'LOGIN_ERROR', 
-            message: 'Login failed' 
-          }
-        };
-      }
-      return loginSuccessful;
-    } catch (error) {
-      console.error("Login error:", error);
-      return { 
-        success: false, 
-        error: { 
-          code: 'LOGIN_ERROR', 
-          message: error instanceof Error ? error.message : 'Login failed' 
-        }
-      };
+    if (isLoggedIn) {
+      fetchAccounts();
     }
-  };
+  }, [userData?.id, isLoggedIn]);
 
   const handleLogout = async () => {
     await authService.logout(dispatch);
+    router.push('/auth/login');
   };
 
   if (isLoading) {
@@ -72,20 +59,19 @@ const HomePage: React.FC = () => {
     );
   }
 
+  if (!isLoggedIn) {
+    return null;
+  }
+
   return (
     <div
       className="min-h-screen md:p-2"
       style={{ backgroundColor: "transparent" }}
     >
-      <Register />
-      {isLoggedIn ? (
-        <Dashboard 
-          userId={userData?.id || ''}
-          accounts={accounts}
-        />
-      ) : (
-        <Login handleLogin={handleLogin} />
-      )}
+      <Dashboard 
+        userId={userData?.id || ''}
+        accounts={accounts}
+      />
     </div>
   );
 };

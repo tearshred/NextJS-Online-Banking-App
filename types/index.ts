@@ -35,3 +35,26 @@ export type Transaction = {
 };
 
 // Add more types as needed
+
+export interface SignUpFormData {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  initialDeposit: string;
+}
+
+export interface SignUpFormErrors {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  initialDeposit: string;
+  general: string;
+}

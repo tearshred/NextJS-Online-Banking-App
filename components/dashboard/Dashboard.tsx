@@ -17,13 +17,15 @@ import {
 } from "@nextui-org/react";
 import { BalanceIcon } from "../icons";
 
-import AccountInfo from "./AccountInfo";
+import AccountInfo from "./Transactions";
 import IEChart from "./IEChart";
 import ForgotPassword from "../auth/ForgotPassword";
 import PasswordResetForm from "../auth/PasswordResetForm";
 import { fetchUserData } from "@/app/store/authSlice";
 import { User } from "@/types";
 import { getUserData } from '@/app/actions/users/userData'
+import AccountPopover from "./AccountPopover";
+import Transactions from "./Transactions";
 
 interface DashboardProps {
   userId: string;
@@ -79,12 +81,11 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
               className="h-full flex flex-col"
             >
               <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
-                <p className="text-tiny uppercase font-bold">Income</p>
+                <p className="text-tiny uppercase font-bold">Deposits</p>
               </CardHeader>
               <CardBody className="overflow-visible p-4 grid grid-cols-3">
                 <div className="col-span-2">
                   <h1>$ 88,198.77</h1> <BalanceIcon fill="red"/>
-                  <p>{userData.firstName} {userData.lastName}</p>
                 </div>
                 <div>
                   <h1>Test</h1>
@@ -101,7 +102,7 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
               className="h-full flex flex-col"
             >
               <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
-                <p className="text-tiny uppercase font-bold">Expenses</p>
+                <p className="text-tiny uppercase font-bold">Spending</p>
               </CardHeader>
               <CardBody className="overflow-visible p-4 grid grid-cols-3">
                 <div className="col-span-2">
@@ -127,11 +128,22 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
                       <li key={account.id}>
                         <div>
                           <Card
-                            className="flex-row"
+                            className="grid grid-cols-2"
                             shadow="none"
                             radius="none"
                           >
-                            <span className="capitalize">{account.accountType}: ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(account.balance)}</span>
+                            <div>
+                              <span className="capitalize">
+                                {account.accountType}{" "}
+                                <AccountPopover 
+                                  accountNumber={account.accountNumber} 
+                                />{": "}
+                                ${new Intl.NumberFormat('en-US', { 
+                                  minimumFractionDigits: 2, 
+                                  maximumFractionDigits: 2 
+                                }).format(account.balance)}
+                              </span>
+                            </div>
                           </Card>
                         </div>
                       </li>
@@ -147,7 +159,7 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
         </div>
       </div>
       <IEChart />
-      <AccountInfo />
+      <Transactions accounts={accounts}/>
     </div>
   );
 };

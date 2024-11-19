@@ -2,6 +2,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Account } from '@/types';
 import { getAccounts } from '@/app/actions/accounts/getAccounts';
+import { RootState } from './store';
+
+interface AccountState {
+  accounts: Account[];
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  routingNumber: string;
+}
 
 const serializeAccount = (account: any) => ({
   ...account,
@@ -32,7 +39,8 @@ const accountSlice = createSlice({
   initialState: {
     accounts: [] as Account[],
     status: 'idle',
-  },
+    routingNumber: '123456789'
+  } as AccountState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -49,5 +57,7 @@ const accountSlice = createSlice({
       });
   },
 });
+
+export const selectRoutingNumber = (state: RootState) => state.account.routingNumber;
 
 export default accountSlice.reducer;

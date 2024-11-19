@@ -9,6 +9,7 @@ import {
   CardBody,
   Spacer,
   CircularProgress,
+  Divider,
 } from "@nextui-org/react";
 
 interface LoginProps {
@@ -150,10 +151,13 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
                 )}
               </Button>
             </div>
-            <div>
-              <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
+            <div className="text-center mt-4">
+            <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
+            <Divider className="my-2"/>
+              <a className="text-tiny" href="/auth/sign-up">
+                Don't have an account? Sign up
+              </a>
             </div>
-            
           </form>
         </CardBody>
       </Card>

@@ -1,16 +1,21 @@
-"use client";
+'use client'
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '@/app/store/store';
 import { authService } from '@/app/services/authService';
-import Login from '@/components/auth/Login';
+import SignUpForm from '@/components/auth/sign-up/SignUpForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CircularProgress } from "@nextui-org/react";
 
-export default function LoginPage() {
+// Sign-up page wrapper component:
+// - Handles authentication state
+// - Redirects if user is already logged in
+// - Shows loading state during auth check
+// - Renders the main sign-up form
+export default function SignUpPage() {
     const router = useRouter();
     const dispatch: AppDispatch = useDispatch();
     const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
@@ -29,31 +34,6 @@ export default function LoginPage() {
         initAuth();
     }, [dispatch, isLoggedIn, router]);
 
-    const handleLogin = async (username: string, password: string) => {
-        try {
-            const result = await authService.login(dispatch, username, password);
-            if (result) {
-                router.push('/');
-            }
-            return {
-                success: result ? true : false,
-                error: result ? undefined : {
-                    code: 'LOGIN_ERROR',
-                    message: 'Login failed'
-                }
-            };
-        } catch (error) {
-            console.error("Login error:", error);
-            return { 
-                success: false, 
-                error: { 
-                    code: 'LOGIN_ERROR', 
-                    message: error instanceof Error ? error.message : 'Login failed' 
-                }
-            };
-        }
-    };
-
     if (isLoading || isLoggedIn) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -64,7 +44,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex items-center justify-center min-h-screen">
-            <Login handleLogin={handleLogin} />
+            <SignUpForm />
         </div>
     );
 }
