@@ -32,12 +32,17 @@ export default function LoginPage() {
     const handleLogin = async (username: string, password: string) => {
         try {
             const result = await authService.login(dispatch, username, password);
-            if (result) {
+            console.log("Auth service result:", result);
+
+            if (result.success) {
                 router.push('/');
+                return { success: true };
             }
+
+            // If login failed, return the error from authService
             return {
-                success: result ? true : false,
-                error: result ? undefined : {
+                success: false,
+                error: result.error || {
                     code: 'LOGIN_ERROR',
                     message: 'Login failed'
                 }

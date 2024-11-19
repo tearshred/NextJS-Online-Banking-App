@@ -3,6 +3,8 @@
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { User } from "@/types";
+import crypto from 'crypto';
+import { sendEmail } from '@/app/actions/emails/sendEmail';
 
 export async function signUpAction(
   data: Omit<User, "id" | "accounts"> & { 
@@ -66,6 +68,32 @@ export async function signUpAction(
           }
         }
       }
+    });
+
+    // Generate a secure email verification token
+    const emailVerificationToken = crypto.randomBytes(32).toString('base64url');
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+    await prisma.user.update({
+        where: { id: newUser.id },
+        data: {
+            emailVerificationToken: {
+                set: emailVerificationToken
+            }
+        }
+    });
+
+    await sendEmail({
+        from: 'Admin <admin@mylittledevhub.com>',
+        to: [newUser.email],
+        subject: 'Verify Your Email Address',
+        templateType: 'verifyEmail',
+        templateData: { 
+            email: newUser.email, 
+            emailVerificationToken,
+            resetLink: `${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
+        },
+        text: `To verify your email, click the following link: ${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
     });
 
     return newUser;

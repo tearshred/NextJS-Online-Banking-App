@@ -26,6 +26,8 @@ model User {
   createdAt DateTime @default(now()) // Relation field linking to multiple accounts
   resetPasswordToken String? @unique
   resetPasswordTokenExpiry DateTime?
+  emailVerified Boolean @default(false)
+  emailVerificationToken String? @unique
 }
 
 model Account {

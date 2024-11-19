@@ -175,7 +175,7 @@ export const useSignUpForm = () => {
           registrationData.password
         );
         router.push("/");
-      }, 2000);
+      }, 5000);
       
     } catch (error: any) {
       setErrors(prev => ({

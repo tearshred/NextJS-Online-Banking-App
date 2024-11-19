@@ -5,11 +5,11 @@ import { Resend, CreateEmailOptions, CreateEmailRequestOptions } from "resend";
 import { EmailTemplate } from "@/components/email-template";
 import { PasswordResetEmailTemplate } from "@/components/email-templates/password-reset";
 // import { TwoFactorAuthEmailTemplate } from "@/components/email-templates/two-factor-auth";
-// import { VerificationEmailTemplate } from "@/components/email-templates/verification";
+import { VerifyEmailTemplate } from "@/components/email-templates/verify-email";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-type EmailType = 'welcome' | 'passwordReset' | '2fa' | 'verification';
+type EmailType = 'welcome' | 'passwordReset' | '2fa' | 'verifyEmail';
 
 type EmailPayload = CreateEmailOptions & {
   templateType: EmailType;
@@ -38,8 +38,8 @@ function generateEmailTemplate(templateType: EmailType, templateData: any): Reac
         return React.createElement(PasswordResetEmailTemplate, templateData);
     //   case "2fa":
     //     return React.createElement(TwoFactorAuthEmailTemplate, templateData);
-    //   case "verification":
-    //     return React.createElement(VerificationEmailTemplate, templateData);
+      case "verifyEmail":
+        return React.createElement(VerifyEmailTemplate, templateData);
       default:
         throw new Error("Invalid email template type");
     }

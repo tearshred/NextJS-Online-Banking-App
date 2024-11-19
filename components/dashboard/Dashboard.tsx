@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React from "react";
 import { useEffect, useState } from "react";
@@ -23,9 +23,10 @@ import ForgotPassword from "../auth/ForgotPassword";
 import PasswordResetForm from "../auth/PasswordResetForm";
 import { fetchUserData } from "@/app/store/authSlice";
 import { User } from "@/types";
-import { getUserData } from '@/app/actions/users/userData'
+import { getUserData } from "@/app/actions/users/userData";
 import AccountPopover from "./AccountPopover";
 import Transactions from "./Transactions";
+import { triggerVerificationEmail } from "@/app/actions/users/verifyEmail";
 
 interface DashboardProps {
   userId: string;
@@ -36,11 +37,12 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
   const userData = useSelector((state: RootState) => state.auth.userData);
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState(true);
+  const [verificationEmailSent, setVerificationEmailSent] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!userId) {
-        console.error('User ID is missing');
+        console.error("User ID is missing");
         return;
       }
 
@@ -58,34 +60,72 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
 
   if (!userData) return <div>Loading...</div>;
 
+  console.log('Full userData:', userData);
+
   // Calculate total balance from all accounts and format correctly
   // toLocaleString is used to format the number with commas and two decimal places
   // For example, 88491.37 will be formatted as 88,491.37
   const totalBalance = accounts
     .reduce((sum, account) => sum + account.balance, 0)
-    .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    .toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  const handleResendVerification = async () => {
+    if (!userData?.email) return;
+    
+    try {
+      await triggerVerificationEmail(userData.email);
+      setVerificationEmailSent(true);
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+    }
+  };
 
   return (
     <div>
+      {userData.emailVerified === false && (
+        <Card className={`w-full ${verificationEmailSent ? 'bg-success-50' : 'bg-warning-50'} mb-4`}>
+          <CardBody className="py-3 text-center">
+            <p className={verificationEmailSent ? 'text-success-600' : 'text-warning-600'}>
+              {verificationEmailSent ? (
+                "Email verification link sent. Please check your email"
+              ) : (
+                <>
+                  Email address not verified. Please check your email or{" "}
+                  <a
+                    href="javascript:void(0)"
+                    className="text-warning-700 hover:text-warning-800 underline"
+                    onClick={handleResendVerification}
+                  >
+                    click here 
+                  </a>{" "}
+                  to resend verification email.
+                </>
+              )}
+            </p>
+          </CardBody>
+        </Card>
+      )}
+      
       <div className="min-w-full py-3 px-0.5">
         <div className="my-2 grid-cols-3 p-3">
-          <h1 className="text-2xl"><b>${totalBalance}</b></h1>
-          <p className="text-tiny">Total Balance</p>    
+          <h1 className="text-2xl">
+            <b>${totalBalance}</b>
+          </h1>
+          <p className="text-tiny">Total Balance</p>
         </div>
         {/* Account Info */}
         <div className="grid sm:grid-cols-1 md:grid-cols-3 md:mt-5 auto-rows-fr gap-3">
           <div className="h-full">
-            <Card
-              shadow="sm"
-              radius="sm"
-              className="h-full flex flex-col"
-            >
+            <Card shadow="sm" radius="sm" className="h-full flex flex-col">
               <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
                 <p className="text-tiny uppercase font-bold">Deposits</p>
               </CardHeader>
               <CardBody className="overflow-visible p-4 grid grid-cols-3">
                 <div className="col-span-2">
-                  <h1>$ 88,198.77</h1> <BalanceIcon fill="red"/>
+                  <h1>$ 88,198.77</h1> <BalanceIcon fill="red" />
                 </div>
                 <div>
                   <h1>Test</h1>
@@ -96,22 +136,18 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
           </div>
           {/* Expenses */}
           <div className="h-full">
-            <Card
-              shadow="sm"
-              radius="sm"
-              className="h-full flex flex-col"
-            >
+            <Card shadow="sm" radius="sm" className="h-full flex flex-col">
               <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
                 <p className="text-tiny uppercase font-bold">Spending</p>
               </CardHeader>
               <CardBody className="overflow-visible p-4 grid grid-cols-3">
                 <div className="col-span-2">
-                  <h1>$ 13,512.51</h1> <BalanceIcon fill="red"/>
+                  <h1>$ 13,512.51</h1> <BalanceIcon fill="red" />
                 </div>
                 <div>
                   <h1>Test</h1>
                 </div>
-                </CardBody>
+              </CardBody>
               <CardFooter className="text-small justify-between"></CardFooter>
             </Card>
           </div>
@@ -135,12 +171,13 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
                             <div>
                               <span className="capitalize">
                                 {account.accountType}{" "}
-                                <AccountPopover 
-                                  accountNumber={account.accountNumber} 
-                                />{": "}
-                                ${new Intl.NumberFormat('en-US', { 
-                                  minimumFractionDigits: 2, 
-                                  maximumFractionDigits: 2 
+                                <AccountPopover
+                                  accountNumber={account.accountNumber}
+                                />
+                                {": "}$
+                                {new Intl.NumberFormat("en-US", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
                                 }).format(account.balance)}
                               </span>
                             </div>
@@ -159,7 +196,7 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
         </div>
       </div>
       <IEChart />
-      <Transactions accounts={accounts}/>
+      <Transactions accounts={accounts} />
     </div>
   );
 };

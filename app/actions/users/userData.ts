@@ -15,6 +15,7 @@ export async function getUserData(userId: string) {
         firstName: true,
         lastName: true,
         address: true,
+        emailVerified: true,
         accounts: {
           select: {
             id: true,

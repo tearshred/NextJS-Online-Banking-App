@@ -48,3 +48,43 @@ export const validatePersonalInfoTab = (formData: SignUpFormData) => {
   const { firstName, lastName } = formData;
   return firstName.trim().length > 0 && lastName.trim().length > 0;
 };
+
+// Login validation types
+export interface LoginFormData {
+  username: string;
+  password: string;
+}
+
+export interface LoginFormErrors {
+  username: boolean;
+  password: boolean;
+  general: boolean | string;
+}
+
+// Validates the login form
+export const validateLoginForm = (formData: LoginFormData): LoginFormErrors => {
+  const errors: LoginFormErrors = {
+    username: false,
+    password: false,
+    general: false
+  };
+
+  // Username validation
+  if (!formData.username.trim()) {
+    errors.username = true;
+  } else if (!validateUsername(formData.username)) {
+    errors.username = true;
+  }
+
+  // Password validation - for login we only check if it's empty
+  if (!formData.password.trim()) {
+    errors.password = true;
+  }
+
+  return errors;
+};
+
+// Helper to check if login form has errors
+export const hasLoginErrors = (errors: LoginFormErrors): boolean => {
+  return Object.values(errors).some(error => error === true);
+};

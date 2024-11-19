@@ -14,6 +14,7 @@ export type User = {
   lastName: string;   
   address: string | null; 
   accounts: Account[]; // Relationship to Account
+  emailVerified?: boolean;
 };
 
 export type Account = {

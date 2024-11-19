@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Input,
   Button,
@@ -11,6 +11,7 @@ import {
   CircularProgress,
   Divider,
 } from "@nextui-org/react";
+import { useLoginForm } from "./hooks/useLoginForm";
 
 interface LoginProps {
   handleLogin: (username: string, password: string) => Promise<{
@@ -23,67 +24,13 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ handleLogin }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({
-    username: "",
-    password: "",
-    general: ""
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login attempt started with:', { username, password }); // Debug log
-    
-    // Reset errors
-    setErrors({
-      username: "",
-      password: "",
-      general: ""
-    });
-
-    // Validate empty fields
-    if (!username.trim() || !password.trim()) {
-      console.log('Empty field validation triggered'); // Debug log
-      setErrors({
-        username: !username.trim() ? "Username is required" : "",
-        password: !password.trim() ? "Password is required" : "",
-        general: ""
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      const response = await handleLogin(username, password);
-      console.log('Login response:', response); // Debug log
-      
-      if (!response.success) {
-        console.log('Login failed:', response.error); // Debug log
-        setErrors({
-          username: "",
-          password: "",
-          general: response.error?.message || "Login failed"
-        });
-        return;
-      }
-
-      // Handle successful login here (redirect, etc.)
-      console.log('Login successful!');
-      
-    } catch (error: any) {
-      console.error('Login error:', error); // Debug log
-      setErrors({
-        username: "",
-        password: "",
-        general: error.message || "An unexpected error occurred"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    formData,
+    errors,
+    isLoading,
+    handleInputChange,
+    handleSubmit
+  } = useLoginForm({ handleLogin });
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -93,21 +40,16 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
           <h4 className="font-bold text-large">Log In</h4>
         </CardHeader>
         <CardBody>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2" noValidate>
             <Input
               isRequired
               isClearable
-              onClear={() => setUsername("")}
+              onClear={() => handleInputChange('username', '')}
               label="Username"
               labelPlacement="inside"
               type="text"
-              fullWidth
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                setErrors(prev => ({ ...prev, username: "", general: "" }));
-              }}
-              className="mb-4"
+              value={formData.username}
+              onValueChange={(value) => handleInputChange('username', value)}
               isInvalid={!!errors.username}
               errorMessage={errors.username}
             />
@@ -116,30 +58,19 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
               label="Password"
               labelPlacement="inside"
               type="password"
-              fullWidth
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setErrors(prev => ({ ...prev, password: "", general: "" }));
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Backspace" && !password) {
-                  setPassword("");
-                }
-              }}
-              className="mb-4"
+              value={formData.password}
+              onValueChange={(value) => handleInputChange('password', value)}
               isInvalid={!!errors.password}
               errorMessage={errors.password}
             />
             {errors.general && (
-              <div className="text-danger text-sm mb-2 text-center">
+              <div className="text-danger text-sm text-center">
                 {errors.general}
               </div>
             )}
             <Spacer y={1} />
             <div className="flex justify-center">
               <Button
-                className="my-1"
                 color="primary"
                 type="submit"
                 disabled={isLoading}
@@ -152,8 +83,8 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
               </Button>
             </div>
             <div className="text-center mt-4">
-            <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
-            <Divider className="my-2"/>
+              <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
+              <Divider className="my-2"/>
               <a className="text-tiny" href="/auth/sign-up">
                 Don't have an account? Sign up
               </a>
