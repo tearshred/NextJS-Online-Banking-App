@@ -179,44 +179,62 @@ export const users = [
 export const chartData = [
     {
       name: 'Jan',
-      Income: 4000,
-      Expense: 2400,
-      amt: 2400,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'Feb',
-      Income: 3000,
-      Expense: 1398,
-      amt: 2210,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'Mar',
-      Income: 2000,
-      Expense: 800,
-      amt: 2290,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'Apr',
-      Income: 2780,
-      Expense: 1908,
-      amt: 2000,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'May',
-      Income: 5890,
-      Expense: 1800,
-      amt: 2181,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'Jun',
-      Income: 2390,
-      Expense: 3800,
-      amt: 2500,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
     {
       name: 'Jul',
-      Income: 3490,
-      Expense: 4300,
-      amt: 2100,
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
     },
-  ];
+    {
+      name: 'Aug',
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+    },
+    {
+      name: 'Sep',
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+    },
+    {
+      name: 'Oct',
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+    },
+    {
+      name: 'Nov',
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+    },
+    {
+      name: 'Dec',
+      Income: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+      Expense: Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000,
+    }
+];

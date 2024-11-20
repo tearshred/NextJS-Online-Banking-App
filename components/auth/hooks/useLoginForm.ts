@@ -66,8 +66,8 @@ export const useLoginForm = ({ handleLogin }: UseLoginFormProps) => {
 
     if (Object.values(formErrors).some(error => error === true)) {
       setErrors(formErrors);
-      console.log('Username error after validation:', formErrors.username);
-      console.log('Password error after validation:', formErrors.password);
+      // console.log('Username error after validation:', formErrors.username);
+      // console.log('Password error after validation:', formErrors.password);
       return;
     }
 
@@ -77,17 +77,14 @@ export const useLoginForm = ({ handleLogin }: UseLoginFormProps) => {
       const response = await handleLogin(formData.username, formData.password);
       
       if (!response.success && response.error) {
-        switch (response.error.code) {
-          case 'USER_NOT_FOUND':
-            setErrors({ username: true, password: false, general: false });
-            setFormData(prev => ({ ...prev, password: '' }));
-            break;
-          case 'INVALID_PASSWORD':
-            setErrors({ password: true, username: false, general: false });
-            setFormData(prev => ({ ...prev, password: '' }));
-            break;
-          default:
-            setErrors({ username: false, password: false, general: response.error?.message || "Login failed" });
+        if (response.error.message === "Username not found") {
+          setErrors({ username: true, password: false, general: false });
+          setFormData(prev => ({ ...prev, password: '' }));
+        } else if (response.error.message === "Invalid password") {
+          setErrors({ password: true, username: false, general: false });
+          setFormData(prev => ({ ...prev, password: '' }));
+        } else {
+          setErrors({ username: false, password: false, general: response.error.message || "Login failed" });
         }
       }
     } catch (error: any) {

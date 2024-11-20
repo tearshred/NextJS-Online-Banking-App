@@ -7,6 +7,13 @@ export async function getAccounts(userId: string) {
     const accounts = await prisma.account.findMany({
       where: {
         userId: userId
+      },
+      select: {
+        id: true,
+        accountType: true,
+        accountNumber: true,  // Explicitly select accountNumber
+        balance: true,
+        userId: true
       }
     });
     

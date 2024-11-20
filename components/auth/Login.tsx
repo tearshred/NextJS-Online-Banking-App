@@ -40,29 +40,35 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
           <h4 className="font-bold text-large">Log In</h4>
         </CardHeader>
         <CardBody>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2" noValidate>
-            <Input
-              isRequired
-              isClearable
-              onClear={() => handleInputChange('username', '')}
-              label="Username"
-              labelPlacement="inside"
-              type="text"
-              value={formData.username}
-              onValueChange={(value) => handleInputChange('username', value)}
-              isInvalid={!!errors.username}
-              errorMessage={errors.username}
-            />
-            <Input
-              isRequired
-              label="Password"
-              labelPlacement="inside"
-              type="password"
-              value={formData.password}
-              onValueChange={(value) => handleInputChange('password', value)}
-              isInvalid={!!errors.password}
-              errorMessage={errors.password}
-            />
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+            <div className="min-h-[70px]">
+              <Input
+                isRequired
+                isClearable
+                onClear={() => handleInputChange('username', '')}
+                label="Username"
+                labelPlacement="inside"
+                description="Enter your username"
+                type="text"
+                value={formData.username}
+                onValueChange={(value) => handleInputChange('username', value)}
+                isInvalid={errors.username}
+                errorMessage={errors.username ? "Invalid username" : undefined}
+              />
+            </div>
+            <div className="min-h-[70px]">
+              <Input
+                isRequired
+                label="Password"
+                labelPlacement="inside"
+                description="Enter your password"
+                type="password"
+                value={formData.password}
+                onValueChange={(value) => handleInputChange('password', value)}
+                isInvalid={errors.password}
+                errorMessage={errors.password ? "Invalid password" : undefined}
+              />
+            </div>
             {errors.general && (
               <div className="text-danger text-sm text-center">
                 {errors.general}

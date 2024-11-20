@@ -9,6 +9,8 @@ interface AccountPopoverProps {
 export default function AccountPopover({ accountNumber }: AccountPopoverProps) {
   const routingNumber = useSelector(selectRoutingNumber);
   
+  if (!accountNumber) return null;
+  
   return (
     <Popover placement="top" showArrow={true} backdrop="blur">
       <PopoverTrigger>

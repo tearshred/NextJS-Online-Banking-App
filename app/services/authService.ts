@@ -24,9 +24,28 @@ export const authService = {
           firstName: completeUserData.firstName,
           lastName: completeUserData.lastName,
           address: completeUserData.address || null,
+           // Map over user's accounts array if it exists (?.); 
+           // if accounts is undefined, use empty array (|| [])
           accounts: completeUserData.accounts?.map(account => ({
+            // Spread all existing account properties into the new object
             ...account,
-            createdAt: account.createdAt instanceof Date ? account.createdAt.toISOString() : account.createdAt
+            // Add userId to each account, linking it to the parent user
+            userId: completeUserData.id,
+            // Set accountNumber using a fallback pattern:
+            // 1. Try to get accountNumber (using 'any' to bypass TypeScript checking)
+            // 2. If that doesn't exist, fall back to account.id
+            accountNumber: (account as any).accountNumber || account.id,
+            // Complex createdAt handling:
+            // 1. Use 'any' to bypass TypeScript property check
+            // *** IMPORTANT LEARNING POINT ***
+            // * The (account as any) type assertions are used because the account type definition doesn't include these properties, 
+            // but we know they might exist at runtime. This is a common pattern when dealing with data that might come from an API 
+            // or database where the TypeScript types don't perfectly match the runtime data structure.
+            // 2. Check if createdAt is a Date object
+            // 3. If it is a Date, convert to ISO string format
+            // 4. If it's not a Date, use the raw createdAt value
+            // 5. If createdAt doesn't exist at all, fall back to null (?? null)
+            createdAt: (account as any).createdAt instanceof Date ? (account as any).createdAt.toISOString() : (account as any).createdAt ?? null
           })) || []
         };
 
@@ -42,12 +61,12 @@ export const authService = {
 
   login: async (dispatch: AppDispatch, username: string, password: string) => {
     try {
-      console.log('Starting login process...');
+      // console.log('Starting login process...');
       const response = await loginAction(username, password);
-      console.log('Login response:', response);
+      // console.log('Login response:', response);
       
       if (!response.success) {
-        console.log('Login failed:', response.error);
+        // console.log('Login failed:', response.error);
         return {
           success: false,
           error: {
@@ -61,7 +80,7 @@ export const authService = {
         throw new Error('Login response data is missing');
       }
       
-      console.log('Login successful, setting up user...');
+      // console.log('Login successful, setting up user...');
       localStorage.setItem("token", response.data.token);
       
       const userData: User = {
@@ -83,7 +102,7 @@ export const authService = {
       return { success: true };
       
     } catch (error) {
-      console.error('Login error:', error);
+      // console.error('Login error:', error);
       return {
         success: false,
         error: {

@@ -1,12 +1,19 @@
-import { Card, CardHeader, CardBody, Avatar, Divider, Spinner } from "@nextui-org/react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Avatar,
+  Divider,
+  Spinner,
+} from "@nextui-org/react";
+import Image from "next/image";
+import { useDashboard } from "./hooks/useDashboard";
 
 export default function UserProfile() {
-  const { userData, loading } = useSelector((state: RootState) => state.auth);
-  
+  const { userData, loading } = useDashboard();
+
   // Safety check - shouldn't normally hit this due to page wrapper
-  if (!userData) return null;
+  if (loading || !userData) return <div>Loading...</div>;
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
@@ -29,27 +36,60 @@ export default function UserProfile() {
         <Divider />
         <CardBody className="p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InfoItem label="Email" value={userData.email} />
-            <InfoItem label="Username" value={userData.username} />
-            <InfoItem 
-              label="Address" 
-              value={userData.address || "Not provided"} 
+            <InfoItem
+              label="Email"
+              value={userData.email}
+              icon={
+                userData.emailVerified ? (
+                  <Image
+                    src="/verified.svg"
+                    alt="Verified Email"
+                    width={16}
+                    height={16}
+                    className="inline-block ml-2"
+                  />
+                ) : (
+                  <Image
+                    src="/exclamation.svg"
+                    alt="Unverified Email"
+                    width={16}
+                    height={16}
+                    className="inline-block ml-2"
+                  />
+                )
+              }
+            />
+            <InfoItem label="Username" value={userData.username} icon="" />
+            <InfoItem
+              label="Address"
+              value={userData.address || "Not provided"}
+              icon=""
             />
           </div>
-          
+
           <Divider className="my-4" />
-          
         </CardBody>
       </Card>
     </div>
   );
 }
 
-function InfoItem({ label, value }: { label: string; value: string }) {
+function InfoItem({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) {
   return (
     <div className="space-y-1">
       <p className="text-small text-default-500">{label}</p>
-      <p className="text-foreground font-medium">{value}</p>
+      <p className="text-foreground font-medium">
+        {value}
+        {icon}
+      </p>
     </div>
   );
-} 
+}

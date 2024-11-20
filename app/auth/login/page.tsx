@@ -32,7 +32,7 @@ export default function LoginPage() {
     const handleLogin = async (username: string, password: string) => {
         try {
             const result = await authService.login(dispatch, username, password);
-            console.log("Auth service result:", result);
+            //console.log("Auth service result:", result);
 
             if (result.success) {
                 router.push('/');
