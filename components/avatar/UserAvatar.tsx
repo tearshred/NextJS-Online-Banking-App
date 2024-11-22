@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { authService } from "@/app/services/authService";
 import { useRouter } from "next/navigation";
+import { UsernameIcon } from "../auth/icons/UsernameIcon";
 
 export default function UserAvatar() {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,14 +31,12 @@ export default function UserAvatar() {
       <Dropdown placement="bottom-end">
         <DropdownTrigger className="cursor-pointer">
           <div>
-            <Badge content="new" color="primary" size="sm">
+            <Badge size="sm" showOutline={false}>
               <Avatar
-                isBordered
                 size="sm"
-                src=""
-                color="primary"
+                as={UsernameIcon}
                 radius="md"
-                className="transition-transform"
+                className="transition-transform primary"
               />
             </Badge>
           </div>

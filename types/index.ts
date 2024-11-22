@@ -24,6 +24,7 @@ export type Account = {
   user?: User;         //Optional relationship to User
   accountType: string;  
   accountNumber: string;
+  accountNickname?: string;
 };
 
 export type Transaction = {
@@ -31,8 +32,22 @@ export type Transaction = {
   accountId: string;              // References Account id
   amount: number;                 // Matches Prisma's amount field type
   transactionType: string;        // Matches Prisma's transactionType field type
+  description?: string;           // Optional description for the transaction
   date: Date;                     // Matches Prisma's date field type
   account?: Account;              // Optional relationship to Account
+};
+
+export type AccountSnapshot = {
+  id: string;
+  accountId: string;
+  year: number;
+  month: number;
+  endingBalance: number;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  transactionCount: number;
+  createdAt: Date;
+  account?: Account;
 };
 
 // Add more types as needed

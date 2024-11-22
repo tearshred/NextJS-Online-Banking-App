@@ -118,7 +118,7 @@ export const useSignUpForm = () => {
         if (!validatePassword(value)) {
           setErrors(prev => ({
             ...prev,
-            password: "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character"
+            password: "Must be at least 8 characters and contain uppercase, lowercase, number, and special character"
           }));
           setIsNextEnabled(false);
         } else if (formData.confirmPassword && value !== formData.confirmPassword) {

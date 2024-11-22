@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import {
   Input,
   Button,
@@ -12,9 +13,15 @@ import {
   Divider,
 } from "@nextui-org/react";
 import { useLoginForm } from "./hooks/useLoginForm";
+import { UsernameIcon } from "./icons/UsernameIcon";
+import { PasswordIcon } from "./icons/PasswordIcon";
+import BankIcon from "/public/bank-svgrepo-com.svg";
 
 interface LoginProps {
-  handleLogin: (username: string, password: string) => Promise<{
+  handleLogin: (
+    username: string,
+    password: string
+  ) => Promise<{
     success: boolean;
     error?: {
       code: string;
@@ -24,49 +31,62 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ handleLogin }) => {
-  const {
-    formData,
-    errors,
-    isLoading,
-    handleInputChange,
-    handleSubmit
-  } = useLoginForm({ handleLogin });
+  const { formData, errors, isLoading, handleInputChange, handleSubmit } =
+    useLoginForm({ handleLogin });
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Card className="p-6 w-full max-w-md mx-auto">
+      <Card className="p-6 w-full max-w-lg mx-auto" radius="sm">
         <CardHeader className="pb-0 pt-2 px-4 flex-col items-center">
-          <p className="text-tiny">Welcome Back</p>
-          <h4 className="font-bold text-large">Log In</h4>
+          <div className="w-16 h-16 mb-2 opacity-90 hover:opacity-100 transition-opacity">
+            <Image src={BankIcon} alt="Bank Icon" className="drop-shadow-md" />
+          </div>
+          <div className="mb-2">
+            <h4 className="font-bold text-xl">Log In</h4>
+          </div>
         </CardHeader>
         <CardBody>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4"
+            noValidate
+          >
             <div className="min-h-[70px]">
               <Input
+                variant="bordered"
+                color="primary"
                 isRequired
                 isClearable
-                onClear={() => handleInputChange('username', '')}
-                label="Username"
+                onClear={() => handleInputChange("username", "")}
+                placeholder="@username"
                 labelPlacement="inside"
                 description="Enter your username"
                 type="text"
                 value={formData.username}
-                onValueChange={(value) => handleInputChange('username', value)}
+                onValueChange={(value) => handleInputChange("username", value)}
                 isInvalid={errors.username}
                 errorMessage={errors.username ? "Invalid username" : undefined}
+                startContent={
+                  <UsernameIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                }
               />
             </div>
             <div className="min-h-[70px]">
               <Input
+                variant="bordered"
+                color="primary"
                 isRequired
-                label="Password"
+                placeholder="Enter your password"
                 labelPlacement="inside"
                 description="Enter your password"
                 type="password"
                 value={formData.password}
-                onValueChange={(value) => handleInputChange('password', value)}
+                onValueChange={(value) => handleInputChange("password", value)}
                 isInvalid={errors.password}
                 errorMessage={errors.password ? "Invalid password" : undefined}
+                startContent={
+                  <PasswordIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                }
               />
             </div>
             {errors.general && (
@@ -77,6 +97,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
             <Spacer y={1} />
             <div className="flex justify-center">
               <Button
+                size="sm"
                 color="primary"
                 type="submit"
                 disabled={isLoading}
@@ -89,8 +110,10 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
               </Button>
             </div>
             <div className="text-center mt-4">
-              <a className="text-tiny" href="/auth/reset-request">Forgot Username/Password?</a>
-              <Divider className="my-2"/>
+              <a className="text-tiny" href="/auth/reset-request">
+                Forgot Username/Password?
+              </a>
+              <Divider className="my-2" />
               <a className="text-tiny" href="/auth/sign-up">
                 Don't have an account? Sign up
               </a>

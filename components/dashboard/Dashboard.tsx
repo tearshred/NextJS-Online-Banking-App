@@ -11,6 +11,8 @@ import ExpenseSnapshot from "./components/balance/ExpenseSnapshot";
 import AccountsSnapshot from "./components/balance/AccountsSnapshot";
 import BudgetSnapshot from "./components/balance/BudgetSnapshot";
 import OpenNewAccountButton from "./open-account/OpenNewAccountButton";
+import { Card } from "@nextui-org/react";
+
 interface DashboardProps {
   userId: string;
   accounts: any[];
@@ -18,6 +20,9 @@ interface DashboardProps {
 
 const Dashboard = ({ userId, accounts }: DashboardProps) => {
   const { loading, userData, verificationEmailSent, handleResendVerification } = useDashboard();
+  
+  // Find the checking account
+  const checkingAccount = accounts.find(account => account.accountType === 'CHECKING');
   
   if (loading ||!userData) return <div>Loading...</div>;
 
@@ -58,7 +63,18 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
           <BudgetSnapshot />
         </div>
         <div className="md:col-span-2 col-span-full h-full">
-          <IEChart />
+          {checkingAccount ? (
+            <IEChart accountId={checkingAccount.id} />
+          ) : (
+            <Card shadow="sm" radius="sm" className="h-full">
+              <div className="w-full p-4">
+                <h2 className="text-xl font-semibold mb-4">Income & Expenses</h2>
+                <div className="h-[400px] flex items-center justify-center">
+                  No checking account found
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
       {/* Transactions */}

@@ -4,13 +4,15 @@ import authReducer from './authSlice'; // Make sure this path is correct
 import accountReducer from './accountSlice';
 import transactionReducer from './transactionSlice'
 import signUpReducer from './signUpSlice';
+import snapshotReducer from './snapshotSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     account: accountReducer, 
     transaction: transactionReducer,
-    signup: signUpReducer
+    signup: signUpReducer,
+    snapshots: snapshotReducer
   },
 });
 

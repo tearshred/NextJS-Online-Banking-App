@@ -35,10 +35,12 @@ model Account {
   userId      String     // Foreign key referencing User
   accountType String      // e.g., "checking", "savings"
   accountNumber String    @unique
+  accountNickname String? // e.g., "Primary Checking", "Vacation Fund"
   balance     Float      @default(0) // Account balance
   createdAt   DateTime   @default(now())
   transactions Transaction[] // One-to-many relation with Transaction
   user        User       @relation(fields: [userId], references: [id]) // Establishing relation
+  snapshots AccountSnapshot[]
 }
 
 model Transaction {
@@ -46,6 +48,23 @@ model Transaction {
   accountId   String   // Foreign key referencing Account
   amount      Float    // Transaction amount (positive or negative)
   transactionType String // e.g., "deposit", "withdrawal"
+  description String? // Optional description for the transaction
   createdAt   DateTime @default(now())
   account     Account  @relation(fields: [accountId], references: [id]) // Establishing relation
+}
+
+model AccountSnapshot {
+  id              String   @id @default(uuid())
+  accountId       String   // Foreign key to Account
+  year            Int      // Year of the snapshot
+  month           Int      // Month of the snapshot (1-12)
+  endingBalance   Float    // Balance at end of month
+  totalDeposits   Float    // Sum of deposits for the month
+  totalWithdrawals Float   // Sum of withdrawals for the month
+  transactionCount Int     // Total number of transactions
+  createdAt       DateTime @default(now())
+  account         Account  @relation(fields: [accountId], references: [id])
+
+  @@unique([accountId, year, month]) // Ensure one snapshot per account per month
+  @@index([accountId, year, month])  // Index for faster queries
 }

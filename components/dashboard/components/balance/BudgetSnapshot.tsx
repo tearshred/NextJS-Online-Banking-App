@@ -9,15 +9,48 @@ import {
 } from "@nextui-org/react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 import { useBudgetAccountSelection } from "../../hooks/useBudgetAccountSelection";
+import { useCalculateWithdrawals } from "../../hooks/calculateTotalWithdrawals";
 
 const BudgetSnapshot = () => {
   const { selectedAccount, setSelectedAccount, selectedValue, accounts } =
     useBudgetAccountSelection();
+  const { monthlyWithdrawals } = useCalculateWithdrawals();
 
-  //Sample data
+  // Set fixed monthly budget
+  const MONTHLY_BUDGET = 5000;
+  
+  // Calculate budget metrics
+  const usedBudget = monthlyWithdrawals;
+  const remainingBudget = MONTHLY_BUDGET - usedBudget;
+  
+  // Calculate percentage used without upper limit
+  const percentageUsed = Math.round((usedBudget / MONTHLY_BUDGET) * 100);
+  
+  // Calculate how much over budget (if applicable)
+  const percentageOverBudget = percentageUsed > 100 ? percentageUsed - 100 : 0;
+  
+  // Function to determine color based on percentage
+  const getColorByPercentage = (percentage: number): string => {
+    if (percentage <= 25) return "#15803D";      // Green
+    if (percentage <= 50) return "#EAB308";      // Yellow
+    if (percentage <= 75) return "#f97316";      // Orange
+    return "#B91C1C";                            // Red
+  };
+  
+  // Prepare data for pie chart
   const budgetData = [
-    { name: "Used", value: 70, color: "#22c55e" },
-    { name: "Remaining", value: 30, color: "#94A3B8" },
+    { 
+      name: "Used", 
+      value: percentageUsed > 100 ? 100 : percentageUsed, // Cap at 100 for visual only
+      color: getColorByPercentage(percentageUsed),
+      legendColor: "#0F172A"
+    },
+    { 
+      name: "Remaining", 
+      value: percentageUsed > 100 ? 0 : (100 - percentageUsed),
+      color: "#CBD5E1",
+      legendColor: "#0F172A"
+    },
   ];
   
   return (
@@ -68,17 +101,53 @@ const BudgetSnapshot = () => {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Legend verticalAlign="bottom" height={36} />
+              <Legend 
+                verticalAlign="bottom" 
+                align="center"
+                height={36}
+                formatter={(value) => (
+                  <span className="text-slate-800">{value}</span>
+                )}
+                iconSize={14}
+                // wrapperStyle={{
+                //   paddingTop: "20px"
+                // }}
+                iconType="square"       // Makes the icon a square
+                payload={budgetData.map(item => ({
+                  value: item.name,
+                  // type: item.type,
+                  id: item.name,
+                  color: item.color,    // Keeps original color for icon
+                }))}
+              />
             </PieChart>
           </ResponsiveContainer>
 
           <div className="text-center mt-4">
-            <p className="text-2xl font-bold text-gray-800">70%</p>
-            <p className="text-sm text-slate-800">of monthly budget used</p>
+            <p className={`text-2xl font-bold`} 
+               style={{ color: getColorByPercentage(percentageUsed) }}>
+              {percentageUsed}%
+            </p>
+            <p className="text-sm text-slate-800">
+              {percentageUsed > 100 
+                ? `${percentageOverBudget}% over budget` 
+                : 'of monthly budget used'}
+            </p>
             <div className="mt-4">
               <p className="text-sm text-slate-800">
-                <span className="font-semibold">$3,500</span> spent of{" "}
-                <span className="font-semibold">$5,000</span> budget
+                <span className="font-semibold" 
+                      style={{ color: getColorByPercentage(percentageUsed) }}>
+                  ${usedBudget.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </span> spent of{" "}
+                <span className="font-semibold">
+                  ${MONTHLY_BUDGET.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </span> budget
               </p>
             </div>
           </div>

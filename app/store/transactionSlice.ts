@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import prisma from '@/lib/db'; // Ensure the path is correct
+import { getTransactions } from '@/app/actions/transactions/getTransactions';
 
 // Define the interface for transaction data
 interface Transaction {
@@ -7,7 +7,9 @@ interface Transaction {
   accountId: string; // ID of the associated account
   amount: number;
   transactionType: string; // e.g., "deposit", "withdrawal"
-  date: string; // ISO string format for the transaction date
+  description: string | null;
+  // date: string; // ISO string format for the transaction date
+  createdAt: string;
 }
 
 // Define the initial state interface
@@ -25,22 +27,25 @@ const initialState: TransactionState = {
 };
 
 // Async thunk to fetch transactions for an account
-export const fetchTransactions = createAsyncThunk('transaction/fetchTransactions', async (accountId: string) => {
-    const transactions = await prisma.transaction.findMany({
-      where: { accountId },
-      select: {
-        id: true,
-        accountId: true,
-        amount: true,
-        transactionType: true,
-        createdAt: true, // Assuming this is your date field; adjust if necessary
-      },
-    });
-    return transactions.map(transaction => ({
-      ...transaction,
-      date: transaction.createdAt.toISOString(), // Format it as needed
-    }));
-  });
+export const fetchTransactions = createAsyncThunk(
+  'transaction/fetchTransactions', 
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      // console.log('Fetching transactions for userId:', userId);
+      const response = await getTransactions(userId);
+      // console.log('Got response:', response);
+      
+      if (!response?.transactions) {
+        return rejectWithValue('No transactions data received');
+      }
+      
+      return response.transactions;
+    } catch (error: any) {
+      console.error('Error in fetchTransactions:', error);
+      return rejectWithValue(error.message || 'Failed to fetch transactions');
+    }
+  }
+);
 
 // Create the transaction slice
 const transactionSlice = createSlice({
@@ -60,14 +65,17 @@ const transactionSlice = createSlice({
     builder
       .addCase(fetchTransactions.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.loading = false;
+        state.error = null;
         state.transactions = action.payload;
       })
       .addCase(fetchTransactions.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch transactions';
+        state.error = action.payload as string || 'Failed to fetch transactions';
+        state.transactions = [];
       });
   },
 });
