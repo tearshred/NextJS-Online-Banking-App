@@ -35,7 +35,10 @@ const IEChart = ({ accountId }: { accountId: string }) => {
   const [error, setError] = useState<string | null>(null);
   const { fetchRecentSnapshots } = useSnapshots();
 
+  console.log(accountId)
+
   useEffect(() => {
+    console.log('🎯 [IEChart] Component loaded with accountId:', accountId);
     if (accountId) {
       setLoading(true);
       console.log('🎯 [IEChart] Initiating snapshot fetch for account:', accountId);
@@ -58,6 +61,8 @@ const IEChart = ({ accountId }: { accountId: string }) => {
           setError(err.message);
         })
         .finally(() => setLoading(false));
+    } else {
+      console.warn('❌ [IEChart] accountId is undefined or null');
     }
   }, [accountId, fetchRecentSnapshots]);
 
