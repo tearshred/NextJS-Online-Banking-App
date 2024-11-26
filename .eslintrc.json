@@ -43,6 +43,9 @@
     "import/order": "off",
     "react/self-closing-comp": "off",
     "react/jsx-sort-props": "off",
-    "padding-line-between-statements": "off"
+    "padding-line-between-statements": "off",
+    "react/no-unescaped-entities": "off",
+    "react/no-unknown-property": "off",
+    "jsx-a11y/label-has-associated-control": "off"
   }
 }
