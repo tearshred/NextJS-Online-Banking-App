@@ -51,7 +51,13 @@ export default function RootLayout({
               {children}
             </main>
             <footer className="w-full flex items-center justify-center py-3">
-              Blah
+              
+              <p>
+                Let's talk - shoot me an&nbsp;
+                <a href="mailto:nickmiskelin@gmail.com" className="text-blue-500 hover:underline">
+                  email
+                </a> | © {new Date().getFullYear()}
+              </p>
             </footer>
           </div>
         </Providers>

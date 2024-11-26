@@ -7,6 +7,7 @@ export const useCalculateWithdrawals = () => {
   const getCurrentMonthWithdrawals = () => {
     if (!transactions?.length) return 0;
 
+    // In order to calculate deposits for current month
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();

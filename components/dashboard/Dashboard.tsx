@@ -46,7 +46,7 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
       <div className="min-w-full py-3 px-0.5">
         <div className="my-2 p-3 flex justify-between items-center">
           <TotalBalance />
-          <OpenNewAccountButton />
+          {/* <OpenNewAccountButton /> */}
         </div>
         {/* Account Info */}
         <div className="grid sm:grid-cols-1 md:grid-cols-3 md:mt-5 auto-rows-fr gap-3">

@@ -20,8 +20,7 @@ export default function UserProfile() {
       <Card className="min-h-screen w-full shadow-lg">
         <CardHeader className="flex gap-5 p-6">
           <Avatar
-            isBordered
-            radius="full"
+            radius="none"
             size="lg"
             src={`https://api.dicebear.com/7.x/initials/svg?seed=${userData.firstName} ${userData.lastName}`}
             color="primary"

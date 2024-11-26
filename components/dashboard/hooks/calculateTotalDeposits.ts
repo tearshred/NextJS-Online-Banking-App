@@ -7,6 +7,7 @@ export const useCalculateDeposits = () => {
   const getCurrentMonthDeposits = () => {
     if (!transactions?.length) return 0;
 
+    // In order to ensure it calculates the total deposits for this month and not just all the deposits
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
