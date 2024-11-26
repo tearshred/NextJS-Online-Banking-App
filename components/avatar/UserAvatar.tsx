@@ -30,18 +30,20 @@ export default function UserAvatar() {
     <div className="flex items-center gap-4">
       <Dropdown placement="bottom-end">
         <DropdownTrigger className="cursor-pointer">
-          <div>
-            <Badge size="sm" showOutline={false}>
-              <Avatar
-                size="sm"
-                as={UsernameIcon}
-                radius="md"
-                className="transition-transform primary"
-              />
-            </Badge>
+          <div className="flex items-center">
+            <div>
+              <Badge size="md" showOutline={false}>
+                <Avatar
+                  size="md"
+                  as={UsernameIcon}
+                  radius="md"
+                  className="transition-transform primary"
+                />
+              </Badge>
+            </div>
           </div>
         </DropdownTrigger>
-        <DropdownMenu aria-label="User Actions" variant="flat">
+        <DropdownMenu  aria-label="User Actions" variant="flat">
           <DropdownItem 
             key="profile" 
             className="h-14 gap-2"
@@ -50,12 +52,6 @@ export default function UserAvatar() {
             <p>Signed in as</p>
             <p className="font-bold">@{userData?.username}</p>
           </DropdownItem>
-          <DropdownItem key="settings">Profile</DropdownItem>
-          <DropdownItem key="team_settings">Team Settings</DropdownItem>
-          <DropdownItem key="analytics">Analytics</DropdownItem>
-          <DropdownItem key="system">System</DropdownItem>
-          <DropdownItem key="configurations">Configurations</DropdownItem>
-          <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
           <DropdownItem key="logout" color="primary" onClick={handleLogout}>
             Log Out
           </DropdownItem>

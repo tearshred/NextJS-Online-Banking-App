@@ -4,7 +4,9 @@ import { SignUpFormData, SignUpFormErrors } from "@/types";
 interface PersonalInfoTabProps {
   formData: SignUpFormData;
   errors: SignUpFormErrors;
-  handleInputChange: (field: keyof SignUpFormData) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (
+    field: keyof SignUpFormData
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPrevious: () => void;
 }
 
@@ -20,10 +22,12 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
   onPrevious,
 }) => {
   return (
-    <div className="mt-4 h-[460px]">
+    <div className="mt-4 h-[380px]">
       <Input
         isRequired
-        label="First Name"
+        variant="bordered"
+        color="primary"
+        description="First Name"
         value={formData.firstName}
         onChange={handleInputChange("firstName")}
         className="mb-4"
@@ -32,7 +36,9 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
       />
       <Input
         isRequired
-        label="Last Name"
+        variant="bordered"
+        color="primary"
+        description="Last Name"
         value={formData.lastName}
         onChange={handleInputChange("lastName")}
         className="mb-4"
@@ -40,7 +46,9 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         errorMessage={errors.lastName}
       />
       <Input
-        label="Address"
+        variant="bordered"
+        color="primary"
+        description="Address"
         value={formData.address}
         onChange={handleInputChange("address")}
         className="mb-4"
@@ -48,19 +56,17 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
         errorMessage={errors.address}
       />
       <Input
+        variant="bordered"
+        color="primary"
         type="number"
-        label="Initial Deposit ($)"
+        description="Initial Deposit ($)"
         value={formData.initialDeposit}
         onChange={handleInputChange("initialDeposit")}
-        className="mb-4"
+        className="mb-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         isInvalid={!!errors.initialDeposit}
         errorMessage={errors.initialDeposit}
       />
-      <Button
-        color="primary"
-        className="w-full"
-        onClick={onPrevious}
-      >
+      <Button color="primary" className="w-full" onClick={onPrevious}>
         Previous
       </Button>
     </div>

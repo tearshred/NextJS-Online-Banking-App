@@ -28,7 +28,7 @@ export const CredentialsTab: React.FC<CredentialsTabProps> = ({
   onNext,
 }) => {
   return (
-    <div className="mt-4 h-[460px]">
+    <div className="mt-4 h-[380px]">
       <Input
         isRequired
         variant="bordered"

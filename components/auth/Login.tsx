@@ -94,7 +94,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
                 {errors.general}
               </div>
             )}
-            <Spacer y={1} />
+            {/* <Spacer y={1} /> */}
             <div className="flex justify-center">
               <Button
                 size="sm"

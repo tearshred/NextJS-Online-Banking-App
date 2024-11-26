@@ -82,10 +82,10 @@ const SignUpForm: React.FC = () => {
                 {errors.general}
               </div>
             )}
-            <Spacer y={1} />
+            {/* <Spacer y={1} /> */}
             <div className="flex justify-center">
               <Button
-                className="my-1"
+                className=""
                 color="primary"
                 type="submit"
                 isDisabled={!isFormValid || isLoading}

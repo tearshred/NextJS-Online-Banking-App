@@ -58,7 +58,8 @@ const BudgetSnapshot = () => {
       <div className="p-4 w-full">
         <div className="grid grid-cols-2 items-center mb-4 w-full">
           <h2 className="text-xl font-semibold">Monthly Budget</h2>
-          <div className="flex justify-end">
+          {/* Functionality to be added later - monthly budget calculation for multiple accounts */}
+          {/* <div className="flex justify-end">
             <Dropdown backdrop="blur">
               <DropdownTrigger>
                 <Button variant="bordered">{selectedValue}</Button>
@@ -83,7 +84,7 @@ const BudgetSnapshot = () => {
                 ]}
               </DropdownMenu>
             </Dropdown>
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col items-center">
           <ResponsiveContainer width="100%" height={250}>

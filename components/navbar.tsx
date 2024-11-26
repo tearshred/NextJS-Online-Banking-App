@@ -30,11 +30,14 @@ import {
 
 import UserAvatar from "./avatar/UserAvatar";
 import { User } from "@nextui-org/react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/app/store/store";
+import { authService } from "@/app/services/authService";
+import { AppDispatch } from "@/app/store/store";
 
 export const Navbar = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const dispatch = useDispatch<AppDispatch>();
 
   const searchInput = (
     <Input
@@ -58,7 +61,7 @@ export const Navbar = () => {
   );
 
   return (
-    <NextUINavbar className="drop-shadow-md" maxWidth="full" position="sticky" shouldHideOnScroll>
+    <NextUINavbar className="drop-shadow-sm" maxWidth="full" position="sticky" shouldHideOnScroll>
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -66,22 +69,6 @@ export const Navbar = () => {
             <p className="font-bold text-inherit"></p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
-        </ul>
       </NavbarContent>
 
       <NavbarContent
@@ -94,7 +81,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <NavbarMenuToggle />
+        {isLoggedIn && <UserAvatar />}
       </NavbarContent>
 
       <NavbarMenu>
@@ -110,8 +97,7 @@ export const Navbar = () => {
                       ? "danger"
                       : "foreground"
                 }
-                href="#"
-                size="lg"
+                href={item.href}
               >
                 {item.label}
               </Link>
