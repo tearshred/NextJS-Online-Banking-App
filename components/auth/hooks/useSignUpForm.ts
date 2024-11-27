@@ -178,11 +178,8 @@ export const useSignUpForm = () => {
       }, 5000);
       
     } catch (error: any) {
-      console.log(error)
-      setErrors(prev => ({
-        ...prev,
-        general: error.message || 'Registration failed'
-      }));
+      console.error("Sign-up error:", error);
+      throw new Error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
