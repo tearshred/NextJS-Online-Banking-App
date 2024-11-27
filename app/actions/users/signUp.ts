@@ -91,7 +91,7 @@ export async function signUpAction(
         templateData: { 
             email: newUser.email, 
             emailVerificationToken,
-            resetLink: `${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
+            verifyLink: `${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
         },
         text: `To verify your email, click the following link: ${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
     });

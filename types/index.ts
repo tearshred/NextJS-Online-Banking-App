@@ -32,8 +32,8 @@ export type Transaction = {
   accountId: string;              // References Account id
   amount: number;                 // Matches Prisma's amount field type
   transactionType: string;        // Matches Prisma's transactionType field type
-  description?: string;           // Optional description for the transaction
-  date: Date;                     // Matches Prisma's date field type
+  description: string | null;           // Optional description for the transaction
+  createdAt: string;                     // Matches Prisma's date field type
   account?: Account;              // Optional relationship to Account
 };
 

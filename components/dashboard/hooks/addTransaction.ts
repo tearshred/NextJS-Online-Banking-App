@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/app/store/store';
-import { fetchTransactions } from '@/app/store/transactionSlice';
+import { fetchTransactions, addTransaction as addTransactionAction } from '@/app/store/transactionSlice';
 import { addTransaction as addTransactionServerAction } from '@/app/actions/transactions/addTransaction';
 import { useDashboard } from './useDashboard';
 
@@ -17,12 +17,15 @@ export const useAddTransaction = () => {
 
   const addTransaction = async (params: AddTransactionParams) => {
     try {
-      await addTransactionServerAction(params);
+      const result = await addTransactionServerAction(params);
       
+      dispatch(addTransactionAction(result.data));
+
       // Refresh transactions list immediately after adding
       if (userData?.id) {
         await dispatch(fetchTransactions(userData.id)).unwrap();
       }
+      
     } catch (error) {
       console.error('Error adding transaction:', error);
       throw error;

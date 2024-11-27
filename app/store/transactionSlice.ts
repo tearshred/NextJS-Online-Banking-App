@@ -1,16 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getTransactions } from '@/app/actions/transactions/getTransactions';
-
-// Define the interface for transaction data
-interface Transaction {
-  id: string;
-  accountId: string; // ID of the associated account
-  amount: number;
-  transactionType: string; // e.g., "deposit", "withdrawal"
-  description: string | null;
-  // date: string; // ISO string format for the transaction date
-  createdAt: string;
-}
+import { Transaction } from '@/types'
 
 // Define the initial state interface
 interface TransactionState {
@@ -53,7 +43,7 @@ const transactionSlice = createSlice({
   initialState,
   reducers: {
     // Add a transaction
-    addTransaction(state, action) {
+    addTransaction: (state, action)  => {
       state.transactions.push(action.payload);
     },
     // Remove a transaction

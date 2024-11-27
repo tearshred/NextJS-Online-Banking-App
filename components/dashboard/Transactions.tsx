@@ -13,6 +13,8 @@ import {
   Pagination,
   Button,
   Card,
+  RadioGroup, 
+  Radio
 } from "@nextui-org/react";
 import { fetchTransactions } from "@/app/store/transactionSlice";
 import { useDashboard } from "../dashboard/hooks/useDashboard";
@@ -87,10 +89,6 @@ const Transactions = ({ accounts }: TransactionsProps) => {
     return <div>Error loading transactions: {error}</div>;
   }
 
-  if (!transactions?.length) {
-    return <div>No transactions found</div>;
-  }
-
   return (
     <Card className="my-3">
       <div>
@@ -111,8 +109,9 @@ const Transactions = ({ accounts }: TransactionsProps) => {
         />
         <Table
           className="p-2"
-          isStriped
           removeWrapper
+          color="primary"
+          selectionMode="single"
           aria-label="Transactions table with pagination"
           bottomContent={
             <div className="flex w-full justify-center">

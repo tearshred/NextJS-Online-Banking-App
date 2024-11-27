@@ -74,9 +74,9 @@ const IEChart = ({ accountId }: { accountId: string }) => {
     return <div>Error: {error}</div>;
   }
 
-  if (!data.length) {
-    return <div>No data available for this account</div>;
-  }
+  // if (!data.length) {
+  //   return <div>No data available for this account</div>;
+  // }
 
   return (
     <Card shadow="sm" radius="sm" className="h-full">

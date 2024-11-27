@@ -16,7 +16,7 @@ export async function sendVerificationEmail(email: string, emailVerificationToke
     templateData: { 
       email,
       emailVerificationToken,
-      resetLink: `${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
+      verifyLink: `${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
     },
     text: `To verify your email, click the following link: ${baseUrl}/auth/verify-email?token=${emailVerificationToken}`
   });
