@@ -178,6 +178,7 @@ export const useSignUpForm = () => {
       }, 5000);
       
     } catch (error: any) {
+      console.log(error)
       setErrors(prev => ({
         ...prev,
         general: error.message || 'Registration failed'
