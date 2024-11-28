@@ -6,7 +6,9 @@ import crypto from 'crypto';
 import { sendEmail } from '@/app/actions/emails/sendEmail';
 
 // Function to request a password reset
-export const requestPasswordReset = async (email: string) => {
+export async function requestPasswordReset(email: string) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
     const user = await prisma.user.findUnique({
         where: { email }
     });
@@ -36,17 +38,17 @@ export const requestPasswordReset = async (email: string) => {
         templateData: { 
             email, 
             resetPasswordToken,
-            resetLink: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${resetPasswordToken}`
+            resetLink: `${baseUrl}/auth/reset-password?token=${resetPasswordToken}`
         },
-        text: `To reset your password, click the following link: ${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${resetPasswordToken}`
+        text: `To reset your password, click the following link: ${baseUrl}/auth/reset-password?token=${resetPasswordToken}`
     });
 
-    return "If an account exists with this email, you will receive a password reset link.";
+    return "Password reset e-mail sent. Please check your inbox";
 };
 
 // Function to reset the password using the token
 export const resetPassword = async (token: string, newPassword: string) => {
-    console.log("Attempting to reset password with token:", token);
+    // console.log("Attempting to reset password with token:", token);
 
     const user = await prisma.user.findFirst({
         where: {
@@ -58,7 +60,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
     });
 
     if (!user) {
-        console.log("No user found with valid token");
+        // console.log("No user found with valid token");
         throw new Error("Invalid or expired reset token");
     }
 

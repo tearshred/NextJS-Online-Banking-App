@@ -16,7 +16,7 @@ async function testPrismaUpdate() {
             }
         });
 
-        console.log('Found User:', user);
+        // console.log('Found User:', user);
 
         if (user) {
             const resetPasswordToken = 'newToken123'; // Simulate a token
@@ -35,9 +35,9 @@ async function testPrismaUpdate() {
                 }
             });
 
-            console.log('Updated User:', updatedUser);
+            // console.log('Updated User:', updatedUser);
         } else {
-            console.log('User not found');
+            // console.log('User not found');
         }
     } catch (error) {
         console.error('Error testing Prisma update:', error);

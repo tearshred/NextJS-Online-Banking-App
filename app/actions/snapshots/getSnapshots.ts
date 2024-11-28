@@ -87,16 +87,16 @@ export async function getYearSnapshots(accountId: string, year: number) {
  */
 export async function getRecentSnapshots(accountId: string, months: number = 6) {
   try {
-    console.log('🔍 [getRecentSnapshots] Starting with:', { accountId, months });
+    // console.log('🔍 [getRecentSnapshots] Starting with:', { accountId, months });
     
     // First, verify the account exists
     const account = await prisma.account.findUnique({
       where: { id: accountId }
     });
-    console.log('📊 [getRecentSnapshots] Account found:', account);
+    // console.log('📊 [getRecentSnapshots] Account found:', account);
 
     if (!account) {
-      console.log('❌ [getRecentSnapshots] Account not found');
+      // console.error('❌ [getRecentSnapshots] Account not found');
       return {
         success: false,
         error: 'Account not found'
@@ -106,12 +106,12 @@ export async function getRecentSnapshots(accountId: string, months: number = 6) 
     const today = new Date();
     const startDate = new Date(today.getFullYear(), today.getMonth() - months, 1);
     
-    console.log('📅 [getRecentSnapshots] Query date range:', {
-      startYear: startDate.getFullYear(),
-      startMonth: startDate.getMonth() + 1,
-      endYear: today.getFullYear(),
-      endMonth: today.getMonth() + 1
-    });
+    // console.log('📅 [getRecentSnapshots] Query date range:', {
+    //   startYear: startDate.getFullYear(),
+    //   startMonth: startDate.getMonth() + 1,
+    //   endYear: today.getFullYear(),
+    //   endMonth: today.getMonth() + 1
+    // });
 
     // Log the exact query we're about to make
     const query = {
@@ -129,7 +129,7 @@ export async function getRecentSnapshots(accountId: string, months: number = 6) 
         ]
       }
     };
-    console.log('🔎 [getRecentSnapshots] Query:', JSON.stringify(query, null, 2));
+    // console.log('🔎 [getRecentSnapshots] Query:', JSON.stringify(query, null, 2));
 
     const snapshots = await prisma.accountSnapshot.findMany({
       ...query,
@@ -148,9 +148,9 @@ export async function getRecentSnapshots(accountId: string, months: number = 6) 
       }
     });
 
-    console.log('📈 [getRecentSnapshots] Found snapshots:', 
-      snapshots.length ? snapshots : 'No snapshots found'
-    );
+    // console.log('📈 [getRecentSnapshots] Found snapshots:', 
+    //   snapshots.length ? snapshots : 'No snapshots found'
+    // );
 
     // If no snapshots, let's check if any snapshots exist at all for this account
     if (!snapshots.length) {
@@ -158,9 +158,9 @@ export async function getRecentSnapshots(accountId: string, months: number = 6) 
         where: { accountId },
         take: 1
       });
-      console.log('🔍 [getRecentSnapshots] Checking if any snapshots exist:', 
-        allSnapshots.length ? 'Yes' : 'No'
-      );
+      // console.log('🔍 [getRecentSnapshots] Checking if any snapshots exist:', 
+      //   allSnapshots.length ? 'Yes' : 'No'
+      // );
     }
 
     return {

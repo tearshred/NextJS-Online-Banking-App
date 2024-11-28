@@ -34,9 +34,9 @@ export const useSnapshots = () => {
 
   const fetchRecentSnapshots = useCallback(async (accountId: string, months: number = 6) => {
     try {
-      console.log('🎣 [useSnapshots] Fetching recent snapshots for account:', accountId);
+      // console.log('🎣 [useSnapshots] Fetching recent snapshots for account:', accountId);
       const result = await getRecentSnapshots(accountId, months);
-      console.log('📦 [useSnapshots] Result:', result);
+      // console.log('📦 [useSnapshots] Result:', result);
       if (!result.success) {
         throw new Error(result.error);
       }

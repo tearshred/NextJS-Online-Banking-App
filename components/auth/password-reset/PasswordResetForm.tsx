@@ -1,66 +1,28 @@
 "use client";
 
-import { useState } from "react";
 import { Button, Card, CardBody, CardHeader, Input, Spacer, CircularProgress } from "@nextui-org/react";
-import { resetPassword } from "@/app/actions/users/resetPassword";
+import usePasswordResetForm from "@/components/auth/hooks/usePasswordResetForm";
+import PasswordResetSuccess from "./PasswordResetSuccess";
 
 interface PasswordResetFormProps {
   token: string;
 }
 
 export default function PasswordResetForm({ token }: PasswordResetFormProps) {
-  const [passwords, setPasswords] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | ''; message: string }>({ type: '', message: '' });
+  const {
+    passwords,
+    setPasswords,
+    isLoading,
+    status,
+    isSuccess,
+    validatePassword,
+    isFormValid,
+    handleSubmit,
+  } = usePasswordResetForm(token);
 
-  const validatePassword = (password: string) => {
-    const hasMinLength = password.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    
-    if (!hasMinLength) return "Password must be at least 8 characters";
-    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
-      return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
-    }
-    return "";
-  };
-
-  const isFormValid = () => {
-    return (
-      passwords.password.length > 0 &&
-      passwords.confirmPassword.length > 0 &&
-      !validatePassword(passwords.password) &&
-      passwords.password === passwords.confirmPassword
-    );
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isFormValid()) return;
-
-    setIsLoading(true);
-    try {
-      const result = await resetPassword(token, passwords.password);
-
-      setStatus({
-        type: 'success',
-        message: 'Password has been successfully reset'
-      });
-      setPasswords({ password: '', confirmPassword: '' });
-    } catch (error) {
-      setStatus({
-        type: 'error',
-        message: 'Failed to reset password. The link may have expired.'
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  if (isSuccess) {
+    return <PasswordResetSuccess />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -71,23 +33,16 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
         </CardHeader>
         <CardBody className="px-6">
           {status.type === 'success' ? (
-            <div className="text-center py-4">
-              <p className="text-success font-medium">{status.message}</p>
-              <Spacer y={4} />
-              <a 
-                className="text-primary hover:text-primary-600 transition-colors font-medium" 
-                href="/auth/login"
-              >
-                Back to Login
-              </a>
-            </div>
+            <PasswordResetSuccess />
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <Input
                 isRequired
                 type="password"
-                label="New Password"
+                variant="bordered"
+                placeholder="New Password"
                 labelPlacement="inside"
+                description="Password must contain at least one uppercase letter, one lowercase letter, and one number"
                 value={passwords.password}
                 onChange={(e) => setPasswords(prev => ({ ...prev, password: e.target.value }))}
                 classNames={{
@@ -104,8 +59,10 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
               <Input
                 isRequired
                 type="password"
-                label="Confirm Password"
+                variant="bordered"
+                placeholder="Confirm Password"
                 labelPlacement="inside"
+                description="Confirm Password"
                 value={passwords.confirmPassword}
                 onChange={(e) => setPasswords(prev => ({ ...prev, confirmPassword: e.target.value }))}
                 classNames={{
@@ -129,7 +86,7 @@ export default function PasswordResetForm({ token }: PasswordResetFormProps) {
                   color="primary"
                   type="submit"
                   size="lg"
-                  disabled={isLoading}
+                  isDisabled={isLoading || !isFormValid()}
                 >
                   {isLoading ? (
                     <CircularProgress size="sm" aria-label="Loading..." />

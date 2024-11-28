@@ -57,11 +57,11 @@ export const checkAuthStatus = createAsyncThunk(
       // Direct call to the server action instead of fetch
       const result = await validateToken(token);
 
-      console.log('Validation request made:', {
-        endpoint: 'validateToken server action',
-        tokenExists: !!token,
-        result
-      });
+      // console.log('Validation request made:', {
+      //   endpoint: 'validateToken server action',
+      //   tokenExists: !!token,
+      //   result
+      // });
 
       if (!result.isValid) {
         localStorage.removeItem('token');

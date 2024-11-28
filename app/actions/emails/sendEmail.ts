@@ -24,7 +24,7 @@ export const sendEmail = async (
 
   const data = await resend.emails.send({ ...payload, react: emailContent }, options);
 
-  console.log("Email sent successfully");
+  // console.log("Email sent successfully");
 
   return data;
 };

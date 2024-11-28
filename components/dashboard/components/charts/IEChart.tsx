@@ -35,16 +35,13 @@ const IEChart = ({ accountId }: { accountId: string }) => {
   const [error, setError] = useState<string | null>(null);
   const { fetchRecentSnapshots } = useSnapshots();
 
-  console.log(accountId)
-
   useEffect(() => {
-    console.log('🎯 [IEChart] Component loaded with accountId:', accountId);
     if (accountId) {
       setLoading(true);
-      console.log('🎯 [IEChart] Initiating snapshot fetch for account:', accountId);
+      
       fetchRecentSnapshots(accountId)
         .then((snapshots) => {
-          console.log('✅ [IEChart] Snapshots fetched successfully:', snapshots);
+          // console.log('✅ [IEChart] Snapshots fetched successfully:', snapshots);
           const chartData = (snapshots || []).map((snapshot) => ({
             name: new Date(snapshot.year, snapshot.month - 1).toLocaleDateString('en-US', {
               month: 'short',
@@ -57,12 +54,12 @@ const IEChart = ({ accountId }: { accountId: string }) => {
           setData(chartData);
         })
         .catch(err => {
-          console.error('❌ [IEChart] Error fetching snapshots:', err);
+          // console.error('❌ [IEChart] Error fetching snapshots:', err);
           setError(err.message);
         })
         .finally(() => setLoading(false));
     } else {
-      console.warn('❌ [IEChart] accountId is undefined or null');
+      // console.warn('❌ [IEChart] accountId is undefined or null');
     }
   }, [accountId, fetchRecentSnapshots]);
 

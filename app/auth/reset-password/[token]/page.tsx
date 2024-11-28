@@ -1,4 +1,4 @@
-import PasswordResetForm from "@/components/auth/PasswordResetForm";
+import PasswordResetForm from "@/components/auth/password-reset/PasswordResetForm";
 
 export default function ResetPasswordPage({
   params

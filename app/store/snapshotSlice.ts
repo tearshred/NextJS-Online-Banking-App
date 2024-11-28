@@ -18,9 +18,9 @@ export const fetchAccountSnapshots = createAsyncThunk(
   'snapshots/fetchRecent',
   async (accountId: string, { rejectWithValue }) => {
     try {
-      console.log('🚀 [Redux] Fetching snapshots for account:', accountId);
+      // console.log('🚀 [Redux] Fetching snapshots for account:', accountId);
       const response = await getRecentSnapshots(accountId);
-      console.log('📦 [Redux] Response:', response);
+      // console.log('📦 [Redux] Response:', response);
       
       if (!response.success) {
         return rejectWithValue(response.error);

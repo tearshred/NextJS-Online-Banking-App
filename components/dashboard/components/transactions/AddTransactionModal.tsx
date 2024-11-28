@@ -37,7 +37,7 @@ const AddTransactionModal = ({ isOpen, onClose, accounts }: AddTransactionModalP
       setErrorMessage(null); // Clear any previous errors
       await submitTransaction();
     } catch (error: any) {
-      console.log('Error in modal:', error.message); // Add this for debugging
+      // console.log('Error in modal:', error.message); // Add this for debugging
       setErrorMessage(error.message);
     }
   };

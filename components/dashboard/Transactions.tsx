@@ -145,7 +145,7 @@ const Transactions = ({ accounts }: TransactionsProps) => {
                   {`...${accounts.find(acc => acc.id === item.accountId)?.accountNumber.slice(-4) || 'N/A'}`}
                 </TableCell>
                 <TableCell>{item.description || 'No description'}</TableCell>
-                <TableCell>{item.transactionType}</TableCell>
+                <TableCell className="uppercase">{item.transactionType}</TableCell>
                 <TableCell className={item.transactionType === 'deposit' ? 'text-green-700' : 'text-red-700'}>
                   {item.transactionType === 'deposit' ? '+' : '-'}
                   ${Math.abs(item.amount).toFixed(2)}

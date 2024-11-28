@@ -58,7 +58,7 @@ export default function UserProfile() {
                 )
               }
             />
-            <InfoItem label="Username" value={userData.username} icon="" />
+            {/* <InfoItem label="Username" value={userData.username} icon="" /> */}
             <InfoItem
               label="Address"
               value={userData.address || "Not provided"}
@@ -74,20 +74,20 @@ export default function UserProfile() {
 }
 
 function InfoItem({
-  label,
-  value,
-  icon,
+  label, // The label for the information item (e.g., "Email", "Username")
+  value, // The value associated with the label (e.g., "user@example.com")
+  icon, // An optional icon to display alongside the value
 }: {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
+  label: string; // Type definition for the label prop
+  value: string; // Type definition for the value prop
+  icon: React.ReactNode; // Type definition for the icon prop, which can be any React node
 }) {
   return (
-    <div className="space-y-1">
-      <p className="text-small text-default-500">{label}</p>
-      <p className="text-foreground font-medium">
-        {value}
-        {icon}
+    <div className="space-y-1"> {/* Container for the label and value, with vertical spacing */}
+      <p className="text-small text-default-500">{label}</p> {/* Display the label with specific text styles */}
+      <p className="text-foreground font-medium"> {/* Display the value with bold font */}
+        {value} {/* Render the value */}
+        {icon} {/* Render the icon, if provided */}
       </p>
     </div>
   );

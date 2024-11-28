@@ -6,11 +6,11 @@ export function ensureJWTSecret() {
         const newSecret = crypto.randomBytes(64).toString('hex');
         process.env.JWT_SECRET = newSecret;
         
-        console.log('⚠️ No JWT_SECRET found in environment variables.');
-        console.log('A temporary secret has been generated, but for production:');
-        console.log('1. Add this to your .env file:');
-        console.log(`JWT_SECRET=${newSecret}`);
-        console.log('2. Add it to your deployment environment variables');
+        // console.log('⚠️ No JWT_SECRET found in environment variables.');
+        // console.log('A temporary secret has been generated, but for production:');
+        // console.log('1. Add this to your .env file:');
+        // console.log(`JWT_SECRET=${newSecret}`);
+        // console.log('2. Add it to your deployment environment variables');
     }
     return process.env.JWT_SECRET;
 } 

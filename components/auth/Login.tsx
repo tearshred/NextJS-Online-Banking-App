@@ -111,7 +111,7 @@ const Login: React.FC<LoginProps> = ({ handleLogin }) => {
             </div>
             <div className="text-center mt-4">
               <a className="text-tiny" href="/auth/reset-request">
-                Forgot Username/Password?
+                Forgot Password?
               </a>
               <Divider className="my-2" />
               <a className="text-tiny" href="/auth/sign-up">

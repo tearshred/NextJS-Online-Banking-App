@@ -22,13 +22,13 @@ const Dashboard = ({ userId, accounts }: DashboardProps) => {
   const { loading, userData, verificationEmailSent, handleResendVerification } = useDashboard();
   
   // Log the accounts to check their structure
-  console.log('📊 [Dashboard] Accounts:', accounts);
+  // console.log('📊 [Dashboard] Accounts:', accounts);
 
   // Find the checking account
   const checkingAccount = accounts.find(account => account.accountType === 'checking');
   
   // Log the checking account to see if it's found
-  console.log('📊 [Dashboard] Checking Account:', checkingAccount);
+  // console.log('📊 [Dashboard] Checking Account:', checkingAccount);
   
   if (loading ||!userData) return <div>Loading...</div>;
 
