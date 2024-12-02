@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card } from '@nextui-org/react';
 import { useSnapshots } from '../../hooks/useSnapshots';
+import dummyData from './dummy-data';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -71,9 +72,9 @@ const IEChart = ({ accountId }: { accountId: string }) => {
     return <div>Error: {error}</div>;
   }
 
-  // if (!data.length) {
-  //   return <div>No data available for this account</div>;
-  // }
+  if (!data.length) {
+    setData(dummyData); // Set dummy data if no data is available
+  }
 
   return (
     <Card shadow="sm" radius="sm" className="h-full">
