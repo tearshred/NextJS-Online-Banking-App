@@ -1,10 +1,19 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Card } from '@nextui-org/react';
-import { useSnapshots } from '../../hooks/useSnapshots';
-import dummyData from './dummy-data';
+import React, { useEffect, useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { Card } from "@nextui-org/react";
+import { useSnapshots } from "../../hooks/useSnapshots";
+import dummyData from "./dummy-data";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -19,9 +28,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
         <p className="font-semibold mb-2">{label}</p>
         <p className="text-emerald-600">Income: ${income.toLocaleString()}</p>
-        <p className="text-red-500">Expense: ${expense.toLocaleString()}</p>
-        <p className={`font-semibold mt-2 ${isPositive ? 'text-emerald-600' : 'text-red-500'}`}>
-          Profit: ${profit.toLocaleString()} ({profitPercentage}%)
+        <p className="text-red-500">Expenses: ${expense.toLocaleString()}</p>
+        <p
+          className={`font-semibold mt-2 ${isPositive ? "text-emerald-600" : "text-red-500"}`}
+        >
+          {isPositive ? "Savings" : "Deficit"}: ${profit.toLocaleString()} (
+          {profitPercentage}%)
         </p>
         <p className="text-gray-600 mt-1">Transactions: {transactions}</p>
       </div>
@@ -39,22 +51,27 @@ const IEChart = ({ accountId }: { accountId: string }) => {
   useEffect(() => {
     if (accountId) {
       setLoading(true);
-      
+
       fetchRecentSnapshots(accountId)
         .then((snapshots) => {
           // console.log('✅ [IEChart] Snapshots fetched successfully:', snapshots);
-          const chartData = (snapshots || []).map((snapshot) => ({
-            name: new Date(snapshot.year, snapshot.month - 1).toLocaleDateString('en-US', {
-              month: 'short',
-              year: 'numeric'
-            }),
-            Income: snapshot.totalDeposits || 0,
-            Expense: snapshot.totalWithdrawals || 0,
-            transactionCount: snapshot.transactionCount || 0
-          })).reverse();
+          const chartData = (snapshots || [])
+            .map((snapshot) => ({
+              name: new Date(
+                snapshot.year,
+                snapshot.month - 1
+              ).toLocaleDateString("en-US", {
+                month: "short",
+                year: "numeric",
+              }),
+              Income: snapshot.totalDeposits || 0,
+              Expense: snapshot.totalWithdrawals || 0,
+              transactionCount: snapshot.transactionCount || 0,
+            }))
+            .reverse();
           setData(chartData);
         })
-        .catch(err => {
+        .catch((err) => {
           // console.error('❌ [IEChart] Error fetching snapshots:', err);
           setError(err.message);
         })
@@ -90,37 +107,34 @@ const IEChart = ({ accountId }: { accountId: string }) => {
               bottom: 20,
             }}
           >
-            <CartesianGrid 
-              strokeDasharray="3 3" 
+            <CartesianGrid
+              strokeDasharray="3 3"
               stroke="#f0f0f0"
               horizontal={true}
               vertical={false}
             />
-            <XAxis 
-              dataKey="name" 
+            <XAxis
+              dataKey="name"
               stroke="#888888"
-              tick={{ fill: '#888888' }}
+              tick={{ fill: "#888888" }}
               axisLine={false}
               tickLine={false}
               padding={{ left: 10, right: 10 }}
             />
             <YAxis hide={true} />
-            <Tooltip 
+            <Tooltip
               content={<CustomTooltip />}
-              cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+              cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
             />
-            <Legend 
-              verticalAlign="top"
-              height={36}
-            />
-            <Bar 
-              dataKey="Income" 
+            <Legend verticalAlign="top" height={36} />
+            <Bar
+              dataKey="Income"
               fill="#22c55e"
               radius={[4, 4, 0, 0]}
               maxBarSize={50}
             />
-            <Bar 
-              dataKey="Expense" 
+            <Bar
+              dataKey="Expense"
               fill="#ef4444"
               radius={[4, 4, 0, 0]}
               maxBarSize={50}
