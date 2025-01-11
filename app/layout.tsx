@@ -10,7 +10,11 @@ import store from '../app/store/store';
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
-import { GeistSans } from "geist/font/sans";
+// import { GeistSans } from "geist/font/sans";
+import { Inter } from "next/font/google";
+
+// Initialize the font
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +45,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          GeistSans.className,
+          inter.className,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light"  }}>
