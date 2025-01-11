@@ -14,7 +14,7 @@ export const PasswordResetEmailTemplate: React.FC<Readonly<PasswordResetEmailTem
   <div>
     <h1>Reset Password for <b>{email}</b></h1>
     <p>Please follow the link below to reset your password. Link will expire after 24 hours</p>
-    <a href={`${resetLink}/auth/reset-password?token=${resetPasswordToken}`}>
+    <a href={resetLink}>
       Click here to reset pasword
     </a>
   </div>
