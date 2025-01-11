@@ -11,10 +11,15 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 // import { GeistSans } from "geist/font/sans";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 
 // Initialize the font
-const inter = Inter({ subsets: ['latin'] })
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',  // Add this
+})
 
 export const metadata: Metadata = {
   title: {
@@ -45,13 +50,13 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          inter.className,
+          fontSans.className,
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "light"  }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light", forcedTheme: "light"  }}>
           <div className="" >
             <Navbar />
-            <main className="container mx-auto max-w-full h-full pt-6 p-1.5 flex-grow min-h-screen"  style={{backgroundColor: "#F5F7F8"}}>
+            <main className="container mx-auto max-w-full h-full pt-6 p-1.5 flex-grow min-h-screen">
               {children}
             </main>
             <footer className="w-full flex items-center justify-center py-3">
